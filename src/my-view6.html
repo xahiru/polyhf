@@ -19,31 +19,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       padding: 10px;
     }
-    div#listbox {
-    border: 1px solid #e5e5e5;
-    }
+    paper-input#amnt6 {
+        width: 15em;
+      }
+    paper-item{
+    --paper-item:{
+      white-space: nowrap;
+      width: 100%;
+    };
+  }
+  /*  #itemnofound {
+      background-color:red; 
+    }*/
   </style>
 
-  <style>
-  td, th {
-    padding: 8px;
-    box-sizing: border-box;
-    white-space: nowrap;
-  }
-  td:nth-of-type(1),
-  th:nth-of-type(1) {
-    background-color: rgba(255, 0, 255, 0.2);
-  }
-  tr.iron-selected td {
-    background-color: rgba(0, 0, 0, 0.1);
-  }
-  tr:hover td {
-    background-color: rgba(0, 0, 0, 0.2);
-  }
-  tr td.iron-selected:not(:nth-of-type(1)) {
-    background-color: rgba(255, 255, 0, 0.2);
-  }
-</style>
 
   <div class="card">
     <div class="circle">6</div>
@@ -52,12 +41,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <iron-ajax
     id="ajax"
     auto
-    url="http://xahiru.local:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK"
+    url="http://10.194.39.66:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK"
     method="get"
     last-response="{{itemstokens}}"
     handle-as="json">
   </iron-ajax>
-  <form is = "iron-form" method = "get" action = "/" id = "basic"  content-type="application/json">
+
+  <iron-ajax id="deliverPOPOST" url="http://10.194.39.66:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK" content-type="application/json" method="POST" last-response="{{status}}" on-response="_updateDelivery" handle-as="json"></iron-ajax>
+
+  <form is = "iron-form" method = "get" action = "/" id = "basic6"  content-type="application/json">
     <paper-dropdown-menu label="PO" on-selected-item-changed="_pochanged">
       <paper-listbox id="selectedPo6" slot="dropdown-content" selected="1">
         <dom-repeat items="{{itemstokens}}">
@@ -69,126 +61,69 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </dom-repeat>
       </paper-listbox>
     </paper-dropdown-menu>
+    <paper-button class = "paperbtn" raised on-click = "_scanClick">Scan</paper-button>
     <br>
     <br>
-    <div  id="listbox">
-      <paper-item> 
-        <paper-item>
-          Name
-        </paper-item>
-        <paper-item>
-          Quantity
-        </paper-item>
-        <paper-item>
-          Total
-        </paper-item>
-        <paper-item>
-          Batch ID 
-        </paper-item>
-        <paper-item>
-          Amount
-        </paper-item>
-        <paper-item>
-          Status
-        </paper-item>
-      </paper-item>
-      <dom-repeat items="{{mypo.details}}" index-as="item_no">
-          <template>
-        
-        <dom-repeat items="{{item.batches}}" as="batches" index-as="batch_no">
-          <template>
-            <paper-item value$="{{item.name}}">
-        <paper-checkbox name="{{item.type}}" value="{{item.type}}" checked> </paper-checkbox>
-        <paper-item>
-          {{item.name}}
-        </paper-item>
-        <paper-item>
-          {{item.amount}}
-        </paper-item>
-        <paper-item>
-          {{item.total}}
-        </paper-item>
-        <paper-item>
-          Batch ID 
-        </paper-item>
-
-        <paper-item>
-          Amount
-        </paper-item>
-        <paper-item>
-          Status
-        </paper-item>
-            <paper-item> {{batches.batch}} </paper-item>
-          </paper-item>
-          </template>
-        </dom-repeat>
-
-             
-          </template>
-        </dom-repeat>
-    </div>
-    <br>
+    <div class="text-dark" id="itemnofound"></div>
     <br>
 
-    <vaadin-grid theme="row-dividers" items="[[mypo.details]]" column-reordering-allowed multi-sort>
+    <style is="custom-style">
+    input[readonly] {
+      border: 2px solid transparent;
+    }
 
-    <vaadin-grid-selection-column auto-select frozen> </vaadin-grid-selection-column>
+    input {
+      font: inherit;
+    }
+  </style>
 
-      <vaadin-grid-column width="30px" flex-grow="0" >
+  <vaadin-grid id="mygrid" aria-label="Two-way Binding Example" items="[[mypo.details]]">
+     <vaadin-grid-column width="30px" flex-grow="0" >
         <template>
-          <paper-checkbox aria-label="Select Row" checked="{{selected}}">
+          <paper-checkbox>
         </paper-checkbox></template>
       </vaadin-grid-column>
+    <vaadin-grid-column>
+      <template class="header" width="9em">Name</template>
+      <template>
+        [[item.name]]
+      </template>
+    </vaadin-grid-column>
 
-      <vaadin-grid-column width="9em">
-        <template class="header">Name</template>
-        <template>[[item.name]]</template>
-      </vaadin-grid-column>
+    <vaadin-grid-column>
+      <template class="header">Qty</template>
+      <template>
+        [[item.amount]]
+      </template>
+    </vaadin-grid-column>
 
-      <vaadin-grid-column width="9em">
-        <template class="header">
-          Quantity
-        </template>
-        <template>[[item.amount]]</template>
-      </vaadin-grid-column>
+    <vaadin-grid-column>
+      <template class="header">Total</template>
+      <template>
+        [[item.total]]
+      </template>
+    </vaadin-grid-column>
 
-      <vaadin-grid-column width="9em">
-        <template class="header">
-          Total
-        </template>
-        <template>[[item.total]]</template>
-      </vaadin-grid-column>
-
-      <vaadin-grid-column width="15em">
-        <template class="header">
-         Batches
-        </template>
-        <template>
-
-           <dom-repeat items="{{item.batches}}" as="batch" index-as="batch_no">
+    <vaadin-grid-column width="300px">
+      <template class="header">Batch</template>
+      <template>
+        <dom-repeat items="{{item.batches}}" as="batch" index-as="batch_no">
               <template>
                  <template is="dom-if" if="[[_indexcheck(batch_no)]]">
-                 <paper-item> <paper-item>batchid</paper-item> <paper-item>amount</paper-item> <paper-item>status</paper-item> </paper-item>
+                 <paper-item> <paper-item class="batch">Batch ID</paper-item> <paper-item class="batch">Amount</paper-item> <paper-item class="batch">Status</paper-item> </paper-item>
                 </template>
                   <paper-item>
-                      <paper-item> <paper-checkbox></paper-checkbox>[[batch.batch]]</paper-item> <paper-input id="amnt"> [[batch.amount]]</paper-input> <paper-item> [[_getStatus(batch.status)]]</paper-item>
+                      <paper-item class="batch"><paper-checkbox></paper-checkbox>[[batch.batch]]</paper-item><paper-input id="amnt" type="number" class="batch"> [[batch.amount]]</paper-input> <paper-item class="batch"> [[_getStatus(batch.status)]]</paper-item>
                  </paper-item>
               </template>
             </dom-repeat>
-        </template>
-      </vaadin-grid-column>
+      </template>
+    </vaadin-grid-column>
 
-    </vaadin-grid>
+  </vaadin-grid>
 
-
-        <br>
-         <paper-button class = "paperbtn" raised on-click = "_submit">Recieve</paper-button>
-         <h4>Transaction details:</h4>
-         <div class = "output"></div>
-      </form>
-
-
-    <paper-button id="btnDeliver" class = "paperbtn" raised on-click = "deliverItem">Deliver</paper-button>
+    <br>
+    <paper-button id="btnDeliver" class = "paperbtn" raised on-click = "dealiverOrder">Deliver</paper-button>
     <br>
 
     <h4>Order status:</h4>
@@ -251,12 +186,75 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
 
       }
+       _indexcheck(n){
+        if (n==0) { return true}
+        return false;
+      }
+       _getStatus(s){
+        switch(s){
+          case 1:
+            return "created";
+          break;
+          case 2:
+            return "partially delivered";
+          break;
+          case 3:
+            return "delivered";
+          break;
+          case 4:
+            return "Recieved";
+          break;
+
+          default:
+          return "unknown";
+          
+        }
+      }
       ready(){
         super.ready();
         // if(this.itemstokens == null){
         //   this.mypo = this.itemstokens[0];
         //   console.log(mypo);
         // }
+      }
+
+      _scanClick(){
+          setPageData("my-view6");
+          // this.$.basic6.action = '/qr';
+          // this.$.basic6.allowRedirect = false;
+          // // console.log(me.$.qrcode);
+          // this.$.basic6.submit() //we'll change this to iron-ajax later
+
+          setTokenName("my-view6");
+      }
+
+
+      dealiverOrder(){
+
+      }
+
+       _updateDelivery(e){
+        //TODOshould include updating the currency total 
+         var response = e.detail.xhr.response; 
+
+        console.log(response);
+        // console.log(suc.success);
+
+        if (response) {       
+        // if (suc.success == true) {
+
+          var item = response.details;
+          this.$.basic2.querySelector('.output').innerHTML = "PO delivered";
+          //set
+
+          this.$.ajax.generateRequest();
+          
+        }
+        this.tokenName = ''; 
+        this.price = '';
+        this.amount = '';
+
+        
       }
     }
 

@@ -28,7 +28,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <iron-ajax
       id="ajax"
       auto
-      url="http://xahiru.local:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK"
+      url= "http://10.194.39.66:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK"
       method="get"
       last-response="{{itemstokens}}"
       handle-as="json">
@@ -36,7 +36,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       <iron-ajax id="ajaxPOST" url="../data/response2.js" method="GET" last-response="{{status}}" on-response="_refresh" handle-as="text"></iron-ajax>
 
-      <iron-ajax id="creatItemPOST" url="http://xahiru.local:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK" content-type="application/json" method="POST" last-response="{{status}}" on-response="_updateCreate" handle-as="json"></iron-ajax>
+      <iron-ajax id="creatItemPOST" url="http://10.194.39.66:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK" content-type="application/json" method="POST" last-response="{{status}}" on-response="_updateCreate" handle-as="json"></iron-ajax>
 
       <form is = "iron-form" method = "get" action = "/" id = "basic2"  content-type="application/json">
          
@@ -51,8 +51,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          <br>
          <div id="item">
            <paper-input id="qrcode" class = "paperinput" name = "item-name" label = "name" value="{{tokenName}}" required ></paper-input>
-           <paper-input class = "paperinput" name = "item-price" label = "price" value="{{price}}" required></paper-input>
-           <paper-input class = "paperinput" name = "item-amount" label = "amount" value="{{amount}}" required></paper-input>
+           <paper-input class = "paperinput" type="number"  name = "item-price" label = "price" value="{{price}}" required></paper-input>
+           <paper-input class = "paperinput" type="number"  name = "item-amount" label = "amount" value="{{amount}}" required></paper-input>
           <br>
           <paper-button id="btnscan" class = "paperbtn" raised on-click = "scanClick">scan</paper-button>
           
@@ -62,7 +62,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         <div id="money" hidden>
            <paper-input class = "paperinput" name = "money-name" label = "Currency" value="{{tokenName}}" required></paper-input>
-           <paper-input class = "paperinput" name = "money" label = "amount" value="{{amount}}" required></paper-input>
+           <paper-input class = "paperinput" type="number" name = "money" label = "amount" value="{{amount}}" required></paper-input>
           <br>
         </div>
 
@@ -79,7 +79,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               </dom-repeat>
             </paper-listbox>
           </paper-dropdown-menu>
-           <paper-input class = "paperinput" name = "po-amount" label = "amount" value="{{amount}}" required></paper-input>
+           <paper-input class = "paperinput" type="number" name = "po-amount" label = "amount" value="{{amount}}" required></paper-input>
           <br>
           
         </div>
@@ -120,6 +120,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           moneyName: {
               type: String,
               value: ''
+
+          },
+          restURL: {
+              type: String,
+              value: 'http://10.194.39.66:3000'
 
           },
           amount: {
@@ -282,6 +287,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       scanClick(){
+          setPageData("my-view2");
           this.$.basic2.action = '/qr';
           this.$.basic2.allowRedirect = false;
           // console.log(me.$.qrcode);
@@ -290,6 +296,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       ready() {
         super.ready();
+
+        this.restURL = getRESTURL();
 
         // console.log(this.$.tokentype)
         var me = this;

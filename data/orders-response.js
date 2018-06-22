@@ -37,7 +37,7 @@
                     "delivered": 0,
                     "received": 0,
                     "price": 40,
-                    "status": 1
+                    "status": 2
 
                   }]
                 }
@@ -57,7 +57,7 @@
                     "delivered": 0,
                     "received": 0,
                     "price": 20,
-                    "status": 1
+                    "status": 4
 
                   }]  
                 },
@@ -72,7 +72,7 @@
                     "delivered": 0,
                     "received": 0,
                     "price": 80,
-                    "status": 1
+                    "status": 3
 
                   }]
                 }

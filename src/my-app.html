@@ -165,6 +165,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           // userToken: Object,
           routeData: Object,
           pageData: Object,
+          restURL: String,
           subroute: Object,
           // This shouldn't be neccessary, but the Analyzer isn't picking up
           // Polymer.Element#rootPath
@@ -217,12 +218,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.page = 'view404';
       }
 
+
       ready(){
         super.ready();
         console.log('getting ready');
 
         // setCookie('username', user, -1);
         //    setCookie('orgname', org, -1);
+        this.restURL = "http://10.194.39.66:3000";
         
 
          var user = getCookie("username");
@@ -256,9 +259,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
     }
 
-    function changeRout(page){
+    function setPageData(page){
       // console.log(this);
       this.pageData = page;
+    }
+
+    function getPage() {
+      return this.pageData;
     }
     // function loadJ(){
     //  var data = "data/users.json";
@@ -273,13 +280,57 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     function setTokenName(data){
       // console.log(this.$['my-view2']);
-      console.log(data);
-      // console.log(pageData);
-      var inputbox = document.querySelector('my-app').shadowRoot.querySelector('app-drawer-layout').querySelector('iron-pages').querySelector('.iron-selected').shadowRoot.querySelector('.card').querySelector('#basic2').querySelector('#qrcode');
-        inputbox.setAttribute('value', data);
-        // inputbox.focused = true
+      console.log("this.pageData");
+      console.log(this.pageData);
+      if(this.pageData == 'my-view2'){
+        // console.log(pageData);
+          var inputbox = document.querySelector('my-app').shadowRoot.querySelector('app-drawer-layout').querySelector('iron-pages').querySelector('.iron-selected').shadowRoot.querySelector('.card').querySelector('#basic2').querySelector('#qrcode');
+            inputbox.setAttribute('value', data);
+            // inputbox.focused = true
 
+      }else
+      if(this.pageData == 'my-view5'){
+        
+
+
+      }else
+
+      if(this.pageData == 'my-view6'){
+
+        var namecols = document.querySelector('my-app').shadowRoot.querySelector('app-drawer-layout').querySelector('iron-pages').querySelector('.iron-selected').shadowRoot.querySelector('.card').querySelector('#mygrid').getElementsByTagName('vaadin-grid-cell-content');
+        // var grid = document.querySelector('my-app').shadowRoot.querySelector('app-drawer-layout').querySelector('iron-pages').querySelector('.iron-selected').shadowRoot.querySelector('.card').querySelector('#mygrid');
+          
+          
+        // alert("message");
+
+        console.log(namecols);
+        var notfound = true;
+        var index = 0;
+        for (var i = 0; i < namecols.length; i++) {
+          var inner = namecols[i].textContent.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
+          console.log(inner);
+          // if(inner == "PrimerSetting Spra"){
+          if(inner == data){
+            // console.log("hellooooo");
+            // console.log(document.querySelector('my-app').shadowRoot.querySelector('app-drawer-layout').querySelector('iron-pages').querySelector('.iron-selected').shadowRoot.querySelector('.card').querySelector('#mygrid').getElementById(''))
+            notfound = false;
+            console.log(namecols[i-1].querySelector('paper-checkbox').setAttribute('checked',""));
+
+          } 
+        }
+
+
+      }
+      if (notfound) {
+        var alertno = document.querySelector('my-app').shadowRoot.querySelector('app-drawer-layout').querySelector('iron-pages').querySelector('.iron-selected').shadowRoot.querySelector('.card').querySelector('#basic6').querySelector('#itemnofound');
+        alertno.innerHTML = "Item not found in this POS";
+      }
+      
     }
+
+    function  getRESTURL(){
+        return this.restURL;
+      }
 
     function getCookie(cname) {
         var name = cname + "=";
