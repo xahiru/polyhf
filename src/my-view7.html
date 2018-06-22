@@ -1,0 +1,206 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-view7">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+    paper-input#amnt {
+        width: 15em;
+      }
+    paper-item{
+    --paper-item:{
+      white-space: nowrap;
+      width: 100%;
+    };
+    }
+    </style>
+
+    <div class="card">
+      <div class="circle">7</div>
+      <h1>Recieve</h1>
+      <p>Select the PO and then enter the amount of items received from each batch</p>
+      <p>Scan QR/Bar code to select the item</p>
+      <form is = "iron-form" method = "get" action = "/" id = "basic"  content-type="application/json">
+
+    <iron-ajax auto url="https://demo.vaadin.com/demo-data/1.0/people?count=20" handle-as="json" last-response="{{users}}"></iron-ajax>
+    <iron-ajax
+    id="ajax"
+    auto
+    url="http://xahiru.local:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK"
+    method="get"
+    last-response="{{itemstokens}}"
+    handle-as="json">
+  </iron-ajax>
+
+    <paper-dropdown-menu label="PO" on-selected-item-changed="_pochanged7">
+      <paper-listbox id="selectedPo7" slot="dropdown-content" selected="1">
+        <dom-repeat items="{{itemstokens}}">
+          <template>
+            <template is="dom-if" if="[[_typecheck(item.type)]]">
+              <paper-item value$="{{item}}">{{item.id}}</paper-item>
+            </template>
+          </template>
+        </dom-repeat>
+      </paper-listbox>
+    </paper-dropdown-menu>
+
+    <paper-button class = "paperbtn" raised on-click = "_scan">Scan</paper-button>
+
+    <br>
+    <br>
+
+    <vaadin-grid theme="row-dividers" items="[[mypo.details]]" column-reordering-allowed multi-sort>
+
+    <vaadin-grid-selection-column auto-select frozen> </vaadin-grid-selection-column>
+
+      <vaadin-grid-column width="30px" flex-grow="0" >
+        <template>
+          <paper-checkbox aria-label="Select Row" checked="{{selected}}">
+        </paper-checkbox></template>
+      </vaadin-grid-column>
+
+      <vaadin-grid-column width="9em">
+        <template class="header">Name</template>
+        <template>[[item.name]]</template>
+      </vaadin-grid-column>
+
+      <vaadin-grid-column width="9em">
+        <template class="header">
+          Quantity
+        </template>
+        <template>[[item.amount]]</template>
+      </vaadin-grid-column>
+
+      <vaadin-grid-column width="9em">
+        <template class="header">
+          Total
+        </template>
+        <template>[[item.total]]</template>
+      </vaadin-grid-column>
+
+      <vaadin-grid-column width="15em">
+        <template class="header">
+         Batches
+        </template>
+        <template>
+
+           <dom-repeat items="{{item.batches}}" as="batch" index-as="batch_no">
+              <template>
+                 <template is="dom-if" if="[[_indexcheck(batch_no)]]">
+                 <paper-item> <paper-item>batchid</paper-item> <paper-item>amount</paper-item> <paper-item>status</paper-item> </paper-item>
+                </template>
+                  <paper-item>
+                      <paper-item> <paper-checkbox></paper-checkbox>[[batch.batch]]</paper-item> <paper-input id="amnt"> [[batch.amount]]</paper-input> <paper-item> [[_getStatus(batch.status)]]</paper-item>
+                 </paper-item>
+              </template>
+            </dom-repeat>
+        </template>
+      </vaadin-grid-column>
+
+    </vaadin-grid>
+
+
+        <br>
+         <paper-button class = "paperbtn" raised on-click = "_submit">Recieve</paper-button>
+         <h4>Transaction details:</h4>
+         <div class = "output"></div>
+      </form>
+
+    </div>
+
+
+  </template>
+
+  <script>
+    class MyView7 extends Polymer.Element {
+      static get is() { return 'my-view7'; }
+
+      static get properties() {
+      return {
+        users: {
+          type: Array,
+          notify: true,
+          value: function() {
+            return [];
+          }
+        },
+        itemstokens: {
+          type: Array,
+          notify: true,
+          value: function() {
+            return [];
+          },
+          mypo:{
+            type: Object,
+            value: function(){
+              return[];
+            },
+            observer: '_pochanged7'
+          }
+        }
+      }
+    }
+    _pochanged7(e){
+      var index = 0;
+      for (var i = 0; i < this.itemstokens.length; i++) {
+       if(this.itemstokens[i].id == e.target.value){
+          index = i;
+       } 
+      }
+
+     this.mypo = this.itemstokens[index]
+
+
+    }
+    _typecheck(s){
+      if (s == 'po') {
+          return true;
+        } else {
+          return false;
+        }
+
+      }
+      _indexcheck(n){
+        if (n==0) { return true}
+        return false;
+      }
+      _getStatus(s){
+        switch(s){
+          case 1:
+            return "created";
+          break;
+          case 2:
+            return "partially delivered";
+          break;
+          case 3:
+            return "delivered";
+          break;
+          case 4:
+            return "Recieved";
+          break;
+
+          default:
+          return "unknown";
+          
+        }
+      }
+    }
+
+    window.customElements.define(MyView7.is, MyView7);
+  </script>
+</dom-module>

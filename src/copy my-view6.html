@@ -1,0 +1,179 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="table-design.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-view6">
+  <template>
+    <style include="shared-styles">
+    :host {
+      display: block;
+
+      padding: 10px;
+    }
+    div#listbox {
+    border: 1px solid #e5e5e5;
+    }
+  </style>
+
+  <div class="card">
+    <div class="circle">6</div>
+    <h1>Deliver</h1>
+
+    <iron-ajax
+    id="ajax"
+    auto
+    url="http://xahiru.local:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK"
+    method="get"
+    last-response="{{itemstokens}}"
+    handle-as="json">
+  </iron-ajax>
+  <form is = "iron-form" method = "get" action = "/" id = "basic"  content-type="application/json">
+    <paper-dropdown-menu label="PO" on-selected-item-changed="_pochanged">
+      <paper-listbox id="selectedPo6" slot="dropdown-content" selected="1">
+        <dom-repeat items="{{itemstokens}}">
+          <template>
+            <template is="dom-if" if="[[_typecheck(item.type)]]">
+              <paper-item value$="{{item}}">{{item.id}}</paper-item>
+            </template>
+          </template>
+        </dom-repeat>
+      </paper-listbox>
+    </paper-dropdown-menu>
+    <br>
+    <br>
+    <div  id="listbox">
+      <paper-item> 
+        <paper-item>
+          Name
+        </paper-item>
+        <paper-item>
+          Quantity
+        </paper-item>
+        <paper-item>
+          Total
+        </paper-item>
+        <paper-item>
+          Batch ID 
+        </paper-item>
+        <paper-item>
+          Amount
+        </paper-item>
+        <paper-item>
+          Status
+        </paper-item>
+      </paper-item>
+      <dom-repeat items="{{mypo}}">
+          <template>
+            <template is="dom-if" if="[[_typecheck(item.type)]]">
+              
+              <paper-item value$="{{item.type}}">{{item.id}}</paper-item>
+                
+                <paper-checkbox name="{{item.type}}" value="{{item.type}}" checked> </paper-checkbox>
+                <dom-repeat items="{{item.details}}" as="podetails" index-as="item_no">
+                  <template>
+                  <paper-item value$="{{item.type}}">{{item_no}}
+                    <paper-item>
+          Name
+        </paper-item>
+        <paper-item>
+          Quantity
+        </paper-item>
+                      <br>
+                     <paper-item>{{podetails.name}}</paper-item>
+                      <paper-input class = "paperinput" name = "po-amount" label = "amount" value="{{amount}}" required></paper-input>
+                <paper-item>Active</paper-item>
+                 </paper-item>
+                    
+                  </template>
+                </dom-repeat>
+               
+             
+            </template>
+          </template>
+        </dom-repeat>
+    </div>
+    <br>
+    <br>
+    <paper-button id="btnDeliver" class = "paperbtn" raised on-click = "deliverItem">Deliver</paper-button>
+    <br>
+    <h4>Order status:</h4>
+    <div class = "output"></div>
+  </form>
+
+</div>
+
+
+</template>
+
+<script>
+  class MyView6 extends Polymer.Element {
+    static get is() { return 'my-view6'; }
+    static get properties() {
+      return {
+        itemstokens: {
+          type: Array,
+          notify: true,
+          value: function() {
+            return [];
+          },
+          mypo:{
+            type: Object,
+            value: function(){
+              return[];
+            },
+            observer: '_pochanged'
+          }
+        }
+      }
+    }
+
+
+    _pochanged(e){
+      var index = 0;
+      for (var i = 0; i < this.itemstokens.length; i++) {
+       if(this.itemstokens[i].id == e.target.value){
+          index = i;
+       } 
+      }
+      var tech = [];
+      tech[0] = this.itemstokens[index];
+      this.mypo = tech;
+      // this.mypo = this.itemstokens;
+      // console.log(tech);
+      // console.log(this.itemstokens);
+
+    }
+
+    _typecheck(s){
+      if (s == 'po') {
+          // console.log("ttthru");
+          return true;
+
+        } else {
+          // console.log("falllse");
+          return false;
+        }
+
+      }
+      ready(){
+        super.ready();
+        // if(this.itemstokens == null){
+        //   this.mypo = this.itemstokens[0];
+        //   console.log(mypo);
+        // }
+      }
+    }
+
+    window.customElements.define(MyView6.is, MyView6);
+  </script>
+</dom-module>

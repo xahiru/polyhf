@@ -1,0 +1,346 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-view3">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+    </style>
+
+    <div class="card">
+      <div class="circle">3</div>
+      <h1>Register</h1>
+      <p>This form sends the User registertaion request to the Nodejs adgent on the Docker container</p>
+      <p>Its a one-time-event for each participant</p>
+
+
+      <iron-ajax
+      id="ajaxGetOrg2"
+      auto
+      url="http://kris.local:4000/orgs"
+      method="GET"
+      last-response="{{organizations}}"
+      handle-as="json">
+      </iron-ajax>
+
+      <iron-ajax
+      id="ajaxGetOrg"
+      auto
+      url="http://kris.local:4000/orgs"
+      method="GET"
+      last-response="{{organizations}}"
+      handle-as="json">
+      </iron-ajax>
+
+      <iron-ajax content-type="application/json" id="registerPOSTORi" url="http://kris.local:4000/users" method="POST" last-response="{{status}}" on-response="_refresh" handle-as="json"></iron-ajax>
+      
+      <iron-ajax content-type="application/json" id="registerPOST" url="http://xahiru.local:3000/api/myusers?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK" method="POST" last-response="{{status}}" on-response="_refresh" handle-as="json"></iron-ajax>
+
+      <iron-ajax content-type="application/json" id="testPOST" url="http://kris.local:4000/channels" method="POST" last-response="{{status}}" handle-as="json"></iron-ajax>
+
+
+     
+      <form is = "iron-form" method = "get" action = "/view3" id = "basic"  content-type="application/json">
+        <div id='formbody'>
+         <paper-input class = "paperinput" name = "name" label = "Enter your name" value="{{username}}" required auto-validate>
+         </paper-input>
+         <paper-input name="password" label="Password" type="password" required auto-validate></paper-input>
+         <br>
+         <paper-checkbox name="remember" value="remember" checked>Keep logged in</paper-checkbox><br>
+         
+         <paper-dropdown-menu label="Orginization">
+            <paper-listbox slot="dropdown-content" selected="1">
+              <dom-repeat items="{{organizations}}">
+                <template>
+                  <paper-item value$="{{item}}">{{item}}</paper-item>
+                </template>
+              </dom-repeat>
+            </paper-listbox>
+          </paper-dropdown-menu>
+
+        <paper-dropdown-menu label="Orginization">
+          <paper-listbox id="orgval" slot="dropdown-content" selected="1">
+              <paper-item value$="{{orgname}}">Org1</paper-item>
+              <paper-item  value$="{{orgname}}">Org2</paper-item>
+          </paper-listbox>
+        </paper-dropdown-menu>
+        <br>
+        <br>
+        </div>
+         <paper-button id="btnregister" class = "paperbtn" raised on-click = "register">Register</paper-button>
+
+         <paper-button class = "paperbtn" raised on-click = "logout">logout</paper-button>
+         <h4>You are already registered as:</h4>
+         <div class = "output"></div>
+      </form>
+   
+    <script>
+
+        
+
+         function _submit(event) {
+
+          // console.log(Polymer.dom(event).localTarget.parentElement.id);
+            // Polymer.dom(event).localTarget.parentElement.submit();
+
+            var form = Polymer.dom(event).localTarget.parentElement;
+            // form.presubmit.addEventListener('iron-form-presubmit', function(event) {
+            //   this.request.params['sidekick'] = 'Robin';
+            // });
+            // form.submit();
+            // let body = form.request.params;
+
+            console.log(JSON.stringify(event.detail));
+            // body = {"userInfo" : body };
+            // form.querySelector('.output').innerHTML  =  form.request;
+            // form.allowedRedirect = false;
+            // form.submit();
+
+            // form.addEventListener('iron-form-submit', function(event) {
+            // this.querySelector('.output').innerHTML  =  JSON.stringify(event.detail);
+            // });
+            // console.log(JSON.stringify(event.detail));
+            // this.querySelector('.output').innerHTML  =  JSON.stringify(event.detail);
+         }
+         
+
+         function logout(event) {
+            var form  =  Polymer.dom(event).localTarget.parentElement;
+            // form.reset();
+            // form.querySelector('.output').innerHTML  =  '';
+
+            
+
+            form.querySelector('.output').innerHTML  =  'hello123';
+
+         }
+         function test(argument) {
+
+            console.log(argument);
+           // body...
+         }
+         // basic.addEventListener('iron-form-submit', function(event) {
+         //    this.querySelector('.output').innerHTML  =  JSON.stringify(event.detail);
+         // });
+
+         
+
+      </script>
+
+
+
+
+    </div>
+
+
+  </template>
+
+  <script>
+    class MyView3 extends Polymer.Element {
+      static get is() { return 'my-view3'; }
+
+       static get properties() {
+        return {
+          organizations: {
+              type: Array,
+              value: function() {
+              return [];
+                  }
+            },
+
+            username: {
+              type: String,
+              value: 'user1'
+          },
+          orgname: {
+            type: String,
+            value: 'Org1'
+          }
+        }
+      }
+
+      _refresh(e){
+
+   
+        var suc = e.detail.xhr.response; 
+
+        console.log(suc);
+        console.log(suc.success);
+
+       if (suc) {
+        // if (suc.success == true) {
+          // this.$.basic.querySelector('.output').innerHTML = e.detail.xhr.responseText;
+          setCookie("username", this.username, 365);
+          setCookie("orgname",this.orgname,365);
+          setCookie("authToken",suc.token,365);
+          // console.log('username')
+          // console.log('orgname')
+          console.log(getCookie("authToken"))
+          this.$.basic.submit();
+        } else {
+          this.$.basic.querySelector('.output').innerHTML = "failed to register";
+
+            var user = getCookie("username");
+            var org = getCookie("orgname");
+            setCookie('username', user, -1);
+             setCookie('orgname', org, -1);
+
+        }
+
+      }
+
+
+        register(){
+          // this.resolveUrl()
+
+        var user = getCookie("username");
+        var org = this.$.orgval.selectedItem.innerText
+
+        var role = "user";
+
+          if (user != "") {
+              // alert("Welcome again " + user);
+          } else {
+              user = this.username;
+
+              if (user != "" && user != null) {
+                  // setCookie("username", user, 365);
+                  // setCookie("orgname",org,365);
+
+                  this.orgname = org;
+                  this.username = user;
+                  // console.log(JSON.stringify({username: user, orgname: org}));
+
+
+
+                  this.$.registerPOST.body = JSON.stringify({username: user, orgname: org, role: role});
+                  // this.$.registerPOST.body = "username=Jim&orgname=Org1&role=client";
+                  // this.$.registerPOST.body = '{username:"xahiru", orgname:"ORG1", role: "role"}'
+
+                  console.log(this.$.registerPOST);
+
+                  // this.$.registerPOST.url = 
+                  this.$.registerPOST.generateRequest();
+
+
+              }
+          }
+          
+
+          console.log(getCookie("username"));
+          console.log(getCookie("orgname"));
+
+        }
+
+        logout(){
+
+          var user = getCookie("username");
+          var org = getCookie("orgname");
+          setCookie('username', user, -1);
+           setCookie('orgname', org, -1);
+          console.log(document.cookie);
+          this.$.basic.submit();
+
+
+          //testing authoriztion
+          // var authToken = getCookie("authToken");
+
+          // this.$.testPOST.headers['authorization']= 'Bearer '+ authToken;
+           // console.log(this.$.testPOST.headers);
+
+          // console.log(this.$.testPOST);
+          
+
+          // this.$.testPOST.body = JSON.stringify({channelName: "mychannel", channelConfigPath: "../artifacts/channel/mychannel.tx"});
+
+          // this.$.testPOST.generateRequest();
+
+        }
+
+
+
+     //  _presubmit(e) {
+     //    // debugger;
+     //      const body = this.$.basic.request.body;
+     //      body['newkey'] = [1,2,3];
+     //      console.log('presubmit body', body);
+
+     //      // console.log('presubmit body', body);
+
+        
+
+     //    }
+     ready(){
+      super.ready();
+      // this.$.basic.allowedRedirect = false;
+      var output = this.$.basic.querySelector('.output');
+      var form = this.$.basic;
+      var formbody = this.$.formbody;
+      var btnregister = this.$.btnregister;
+
+      // test usrl
+       var testurl="http://xahiru.local:3000/api/orgs?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK";
+       this.$.ajaxGetOrg.url = testurl;
+
+      var user = getCookie("username");
+      var org = getCookie("orgname");
+          if (user != "") {
+              // alert("Welcome again " + user);
+              formbody.hidden = true;
+              btnregister.hidden = true;
+              output.innerHTML = "You are already registered as:" + user + "<br>"+ org;
+          } else {
+
+               output.innerHTML = "Welcome new user!";
+          }
+
+      
+
+      this.$.basic.addEventListener('iron-form-submit', function(event) {
+      // spinner.active = false;
+        // spinner.hidden = true;
+        // loginFormSubmit.disabled = false;
+        this.querySelector('.output').innerHTML = JSON.stringify(event.detail);
+        });
+
+      this.$.basic.addEventListener('iron-form-presubmit', function() {
+          // this.request.method = 'put';
+          console.log('presubmit params', this.request.params);
+          console.log('presubmit body', this.request.body);
+        });
+
+      this.$.basic.addEventListener('iron-form-response', function(e) {
+          const response = e.detail.response;
+          this.querySelector('.output').innerHTML = JSON.stringify(response, null, 2);
+        });
+     }
+
+    // connectedCallback() {
+    //         super.connectedCallback();
+    //         let eventsDemo = this.shadowRoot.getElementById('basic');
+    //          eventsDemo.addEventListener('iron-form-submit', function (event) {
+    //             console.log("iron form submit");
+
+    //             eventsDemoSubmit.disabled = false;
+    //             this.querySelector('.output').innerHTML = JSON.stringify(event.detail);
+    //         });
+
+    // }
+}
+    window.customElements.define(MyView3.is, MyView3);
+  </script>
+</dom-module>

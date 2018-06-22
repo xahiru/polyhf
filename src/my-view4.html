@@ -1,0 +1,153 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-view4">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+    </style>
+
+    <div class="card">
+      <div class="circle">4</div>
+      <h1>Transfer</h1>
+       <iron-ajax
+      id="ajax"
+      auto
+      url="http://xahiru.local:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK"
+      method="get"
+      last-response="{{itemstokens}}"
+      handle-as="json">
+      </iron-ajax>
+
+      <form is = "iron-form" method = "get" action = "/" id = "basic4"  content-type="application/json">
+          <div class="from">From: {{from}}</div>
+         <paper-dropdown-menu label="To">
+            <paper-listbox slot="dropdown-content" selected="1">
+                  <paper-item>[[to]]</paper-item>       
+            </paper-listbox>
+          </paper-dropdown-menu>
+         <br>
+           <paper-dropdown-menu  label="Item" on-selected-item-changed="change">
+            <paper-listbox id="selectedPo" slot="dropdown-content" selected="1">
+              <dom-repeat items="{{itemstokens}}">
+                <template>
+                  <template is="dom-if" if="[[_typecheck(item.type)]]">
+                  <paper-item value$="{{item.type}}">{{item.details.name}}</paper-item>
+                </template>
+                </template>
+              </dom-repeat>
+            </paper-listbox>
+          </paper-dropdown-menu>
+        <paper-button class = "paperbtn" raised on-click="_scan">Scan</paper-button>
+        <br>
+        <paper-input class = "paperinput" name = "po-amount" label = "amount" value="{{amount}}" required></paper-input>
+        <br>
+        <br>
+         <paper-button class = "paperbtn" raised on-click = "_submit(event)">Send</paper-button>
+         <h4>Transaction details:</h4>
+         <div id = "output"></div>
+      </form>
+
+    </div>
+
+
+  </template>
+
+  <script>
+    class MyView4 extends Polymer.Element {
+      static get is() { return 'my-view4'; }
+
+      static get properties() {
+        return {
+          itemstokens: {
+              type: Array,
+              value: function() {
+              return [];
+                  }
+            },
+          from: {
+              type: String,
+              value: ''
+            },
+          to: {
+              type: String,
+              value: ''
+            }
+          }
+        }
+      _typecheck(s){
+        if (s == 'item') {
+          return true;
+
+        } else {
+          return false;
+        }
+      }
+      _scan(){
+      //     this.$.basic4.action = '/qr';
+      //     this.$.basic4.allowRedirect = false;
+      //     // console.log(me.$.qrcode);
+      //     this.$.basic2.submit() //we'll change this to iron-ajax later
+
+        console.log("changing");
+        this.$.selectedPo.selected = 2;
+      }
+
+      change(e){
+      // this.mypo = po;
+      console.log(e.target.value);
+    }
+
+
+      ready(){
+        
+        super.ready();
+        var me = this;
+        // var address = this.shadowRoot.querySelector('#output').innerHTML;
+        var address = getCookie("username");
+                // me.authToken = getCookie("authToken");
+
+        var myorg = getCookie("orgname");
+        me.from = myorg;
+
+
+        if (myorg = "Org1") {
+          me.to = 'Org2';
+        }else {
+          me.to = 'Org1';
+        }
+        
+          var output = this.shadowRoot.querySelector('#output').innerHTML;
+          // var paper-button =
+        //  this.shadowRoot.querySelector('#basic').addEventListener('click', function (e) {
+        // //    var source = me.$.textsrc;
+        //    // alert("hehe");
+           
+        // });
+        // 
+      //   this.$.basic.addEventListener('click', function(e){ 
+      //     alert("hheh"); 
+      // });
+
+      }
+
+      
+    }
+
+    window.customElements.define(MyView4.is, MyView4);
+  </script>
+</dom-module>

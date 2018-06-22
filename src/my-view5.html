@@ -1,0 +1,56 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-view5">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+    </style>
+
+    <div class="card">
+      <div class="circle">5</div>
+      <h1>Query</h1>
+      <p>TODO</p>
+      <form is = "iron-form" method = "get" action = "/" id = "basic"  content-type="application/json">
+         
+        <paper-dropdown-menu label="Query Type">
+          <paper-listbox slot="dropdown-content" selected="1">
+            <paper-item>Item</paper-item>
+            <paper-item>PO status</paper-item>
+            <paper-item>Money</paper-item>
+          </paper-listbox>
+        </paper-dropdown-menu>
+        <br>
+        <br>
+         <paper-button class = "paperbtn" raised onclick = "_submit(event)">view details</paper-button>
+         <h4>Transaction details:</h4>
+         <div class = "output"></div>
+      </form>
+
+    </div>
+
+
+  </template>
+
+  <script>
+    class MyView5 extends Polymer.Element {
+      static get is() { return 'my-view5'; }
+    }
+
+    window.customElements.define(MyView5.is, MyView5);
+  </script>
+</dom-module>
