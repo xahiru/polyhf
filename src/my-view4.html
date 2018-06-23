@@ -42,17 +42,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </paper-dropdown-menu>
          <br>
            <paper-dropdown-menu  label="Item" on-selected-item-changed="change">
-            <paper-listbox id="selectedPo" slot="dropdown-content" selected="1">
+            <paper-listbox id="selectedItem" slot="dropdown-content" selected="0">
               <dom-repeat items="{{itemstokens}}">
                 <template>
                   <template is="dom-if" if="[[_typecheck(item.type)]]">
-                  <paper-item value$="{{item.type}}">{{item.details.name}}</paper-item>
+                  <paper-item value$="{{item.details.name}}">{{item.details.name}}</paper-item>
                 </template>
                 </template>
               </dom-repeat>
             </paper-listbox>
           </paper-dropdown-menu>
-        <paper-button class = "paperbtn" raised on-click="_scan">Scan</paper-button>
+        <paper-button class = "paperbtn" raised on-click="_scanItem4">Scan</paper-button>
         <br>
         <paper-input class = "paperinput" name = "po-amount" label = "amount" value="{{amount}}" required></paper-input>
         <br>
@@ -97,14 +97,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           return false;
         }
       }
-      _scan(){
-      //     this.$.basic4.action = '/qr';
-      //     this.$.basic4.allowRedirect = false;
+      _scanItem4(){
+          setPageData("my-view4");
+          // this.$.basic4.action = '/qr';
+          // this.$.basic4.allowRedirect = false;
       //     // console.log(me.$.qrcode);
-      //     this.$.basic2.submit() //we'll change this to iron-ajax later
+          // this.$.basic4.submit() //we'll change this to iron-ajax later
 
-        console.log("changing");
-        this.$.selectedPo.selected = 2;
+        // console.log("changing");
+        // this.$.selectedPo.selected = 2;
+        setTokenName("6902083881412");
       }
 
       change(e){
@@ -125,7 +127,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         me.from = myorg;
 
 
-        if (myorg = "Org1") {
+        if (myorg == "Org1") {
           me.to = 'Org2';
         }else {
           me.to = 'Org1';

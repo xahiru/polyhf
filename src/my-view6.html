@@ -51,11 +51,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <form is = "iron-form" method = "get" action = "/" id = "basic6"  content-type="application/json">
     <paper-dropdown-menu label="PO" on-selected-item-changed="_pochanged">
-      <paper-listbox id="selectedPo6" slot="dropdown-content" selected="1">
+      <paper-listbox id="selectedPo6" slot="dropdown-content" selected="0">
         <dom-repeat items="{{itemstokens}}">
           <template>
             <template is="dom-if" if="[[_typecheck(item.type)]]">
-              <paper-item value$="{{item}}">{{item.id}}</paper-item>
+              <paper-item value$="[[item.id]]">PO:[[item.id]] Status:[[item.status]]</paper-item>
             </template>
           </template>
         </dom-repeat>
@@ -113,7 +113,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                  <paper-item> <paper-item class="batch">Batch ID</paper-item> <paper-item class="batch">Amount</paper-item> <paper-item class="batch">Status</paper-item> </paper-item>
                 </template>
                   <paper-item class="batchitems">
-                      <paper-item ><paper-checkbox value$="[[batch.batch]]"></paper-checkbox>[[batch.batch]]</paper-item><paper-input type="number" class="batch"> [[batch.amount]]</paper-input> <paper-item class="batch"> [[_getStatus(batch.status)]]</paper-item>
+                      <paper-item ><paper-checkbox value$="[[batch.batch]]"></paper-checkbox>[[batch.batch]]</paper-item><paper-input type="number" label="[[batch.amount]]" class="batch"> </paper-input> <paper-item class="batch"> [[_getStatus(batch.status)]]</paper-item>
                  </paper-item>
               </template>
             </dom-repeat>
@@ -159,26 +159,42 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     _pochanged(e){
       var index = 0;
-      for (var i = 0; i < this.itemstokens.length; i++) {
-       if(this.itemstokens[i].id == e.target.value){
-          index = i;
-       } 
-      }
+      // for (var i = 0; i < this.itemstokens.length; i++) {
+      //  if(this.itemstokens[i].id == e.target.value){
+      //     index = i;
+      //  } 
+      // }
+
       // var tech = [];
       // tech[0] = this.itemstokens[index];
       // this.mypo = tech;
+      // console.log(e.target.value);
+      if(this.$.selectedPo6.querySelector('.iron-selected') != null){
+        // console.log(this.$.selectedPo6.querySelector('.iron-selected').getAttribute("value"));
+        index = this.$.selectedPo6.querySelector('.iron-selected').getAttribute("value");
+      }
+      
      this.mypo = this.itemstokens[index]
      // console.log(this.mypo.details);
       // this.mypo = this.itemstokens;
-      // console.log(tech);
+      
       // console.log(this.itemstokens);
       this.$.itemnofound.innerHTML = '';
+     var uncheck = this.$.mygrid.querySelectorAll('paper-checkbox');
+     for (var i = 0; i < uncheck.length; i++) {
+       uncheck[i].removeAttribute("checked");
+     }
+
 
     }
 
     _typecheck(s){
-      if (s == 'po') {
-          // console.log("ttthru");
+      // if (s.type == 'po') {
+        if (s == 'po') {
+          // console.log(s);
+          // if(s.status == "created"){
+          //   return true;
+          // }
           return true;
 
         } else {
@@ -281,9 +297,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         console.log(itemList);
 
         // var ajaxbody = JSON.stringify({po: poid, details: itemList});
-        //for testing
+        //FOR TESTING
         ajaxput.method = "PUT";
-         var ajaxbody = JSON.stringify({type:"po", details: itemList, id: poid});
+         var ajaxbody = JSON.stringify({type:"po", status: "delivered", details: itemList, id: poid});
 
           console.log(ajaxbody);
           ajaxput.body = ajaxbody;

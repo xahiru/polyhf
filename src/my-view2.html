@@ -155,10 +155,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         ]
       }
 
-      // setTokenName(tokenName){
-      //   console.log(tokenName);
-      //  // 'setTokenName(tokenName)'
-      // }
 
       itemstokensAddedOrRemoved(changeRecord) {
         console.log("ajax called");
@@ -233,6 +229,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           // JSON.stringify({username: user, orgname: org, role: role});
               ajaxbody = JSON.stringify({
                 type: "money",
+                status: "created", //FOR TESTING
                 details: {
                   name: this.tokenName,
                   amount: this.amount
@@ -243,6 +240,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
               ajaxbody = JSON.stringify({
                 type: "item",
+                status: "created", //FOR TESTING
                 details: {
                   name: this.tokenName,
                   amount: this.amount,
@@ -315,19 +313,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }else if (orgType=='Org2'){
           this.$.tokentype.children[1].disabled = true;
         }
-        //if the user is NSFQ type then PO type is disabled
-        // if (true) {} else {}
-        // _presubmit(e){
-        //   const body = this.$.basic2.request.body;
-        //   body['newkey'] = [1,2,3];
-        //   console.log('presubmit body', body);
-        // }
-        // this.$.basic2.allowRedirect = false;
         
-        // this.push('itemstokens', {name: "Jack Aubrey"});
-        // this.push('itemstokens', {name: "John Aubrey"});
-
-
 
         this.$.tokentype.addEventListener('click', function(){
           form.querySelector('.output').innerHTML = '';

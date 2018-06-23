@@ -1,6 +1,7 @@
 [
   {
     "type": "po",
+    "status": "created",
     "details": [{
                   "name": "Lisptick101",
                   "amount": 10,
@@ -46,6 +47,7 @@
     },
     {
     "type": "po",
+    "status": "created",
     "details": [{
                   "name": "PrimerSetting Spra",
                   "amount": 10,
@@ -80,6 +82,7 @@
     },
     {
     "type": "po",
+    "status": "created",
     "details": [{
                   "name": "6902083881405",
                   "amount": 10,
