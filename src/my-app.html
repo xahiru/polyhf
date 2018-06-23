@@ -289,8 +289,29 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             // inputbox.focused = true
 
       }else
-      if(this.pageData == 'my-view5'){
-        
+      if(this.pageData == 'my-view7'){
+         var namecols = document.querySelector('my-app').shadowRoot.querySelector('app-drawer-layout').querySelector('iron-pages').querySelector('.iron-selected').shadowRoot.querySelector('.card').querySelector('#mygrid7').getElementsByTagName('vaadin-grid-cell-content');
+
+          console.log(namecols);
+        var notfound = true;
+        var index = 0;
+        for (var i = 0; i < namecols.length; i++) {
+          var inner = namecols[i].textContent.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
+          console.log(inner);
+          // if(inner == "PrimerSetting Spra"){
+          if(inner == data){
+            // console.log("hellooooo");
+            // console.log(document.querySelector('my-app').shadowRoot.querySelector('app-drawer-layout').querySelector('iron-pages').querySelector('.iron-selected').shadowRoot.querySelector('.card').querySelector('#mygrid').getElementById(''))
+            notfound = false;
+            console.log(namecols[i-1].querySelector('paper-checkbox').setAttribute('checked',""));
+
+          } 
+        }
+
+        if (notfound) {
+        var alertno = document.querySelector('my-app').shadowRoot.querySelector('app-drawer-layout').querySelector('iron-pages').querySelector('.iron-selected').shadowRoot.querySelector('.card').querySelector('#basic7').querySelector('#itemnofound7');
+        alertno.innerHTML = "Item not found in this POS";
+      }
 
 
       }else
@@ -319,12 +340,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           } 
         }
 
-
-      }
-      if (notfound) {
+        if (notfound) {
         var alertno = document.querySelector('my-app').shadowRoot.querySelector('app-drawer-layout').querySelector('iron-pages').querySelector('.iron-selected').shadowRoot.querySelector('.card').querySelector('#basic6').querySelector('#itemnofound');
         alertno.innerHTML = "Item not found in this POS";
       }
+      }
+
+      
       
     }
 

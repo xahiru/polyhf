@@ -41,7 +41,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <iron-ajax
     id="ajax"
     auto
-    url="http://10.194.39.66:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK"
+    url="http://xahiru.local:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK"
     method="get"
     last-response="{{itemstokens}}"
     handle-as="json">
@@ -59,12 +59,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </paper-listbox>
     </paper-dropdown-menu>
 
-    <paper-button class = "paperbtn" raised on-click = "_scan">Scan</paper-button>
+    <paper-button class = "paperbtn" raised on-click = "_scanClick7">Scan</paper-button>
 
     <br>
     <br>
+    <div class="text-dark" id="itemnofound"></div>
+    <br>
 
-    <vaadin-grid theme="row-dividers" items="[[mypo.details]]" column-reordering-allowed multi-sort>
+    <vaadin-grid id="mygrid7" theme="row-dividers" items="[[mypo.details]]" column-reordering-allowed multi-sort>
 
 
       <vaadin-grid-column width="30px" flex-grow="0" >
@@ -197,6 +199,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           return "unknown";
           
         }
+      }
+       _scanClick7(){
+          setPageData("my-view7");
+          this.$.basic7.action = '/qr';
+          this.$.basic7.allowRedirect = false;
+          // console.log(me.$.qrcode);
+          this.$.basic7.submit() //we'll change this to iron-ajax later
+
+          // setTokenName("my-view6");
       }
 
     }

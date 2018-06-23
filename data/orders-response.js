@@ -77,6 +77,40 @@
                   }]
                 }
                 ]
+    },
+    {
+    "type": "po",
+    "details": [{
+                  "name": "6902083881405",
+                  "amount": 10,
+                  "total": 1232,
+                  "batches": [{
+                    "batch": 1,
+                    "amount": 3,
+                    "pending": 7,
+                    "delivered": 0,
+                    "received": 0,
+                    "price": 20,
+                    "status": 4
+
+                  }]  
+                },
+                {
+                  "name": "6921168509256",
+                  "amount": 200,
+                  "total": 1232,
+                  "batches": [{
+                    "batch": 4,
+                    "amount": 50,
+                    "pending": 150,
+                    "delivered": 0,
+                    "received": 0,
+                    "price": 80,
+                    "status": 3
+
+                  }]
+                }
+                ]
     }
 
 ]

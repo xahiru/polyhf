@@ -28,7 +28,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <iron-ajax
       id="ajax"
       auto
-      url= "http://10.194.39.66:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK"
+      url= "http://xahiru.local:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK"
       method="get"
       last-response="{{itemstokens}}"
       handle-as="json">
@@ -36,7 +36,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       <iron-ajax id="ajaxPOST" url="../data/response2.js" method="GET" last-response="{{status}}" on-response="_refresh" handle-as="text"></iron-ajax>
 
-      <iron-ajax id="creatItemPOST" url="http://10.194.39.66:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK" content-type="application/json" method="POST" last-response="{{status}}" on-response="_updateCreate" handle-as="json"></iron-ajax>
+      <iron-ajax id="creatItemPOST" url="http://xahiru.local:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK" content-type="application/json" method="POST" last-response="{{status}}" on-response="_updateCreate" handle-as="json"></iron-ajax>
 
       <form is = "iron-form" method = "get" action = "/" id = "basic2"  content-type="application/json">
          
@@ -124,7 +124,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           },
           restURL: {
               type: String,
-              value: 'http://10.194.39.66:3000'
+              value: 'xahiru.local:3000'
 
           },
           amount: {
