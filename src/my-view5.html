@@ -24,21 +24,129 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <div class="card">
       <div class="circle">5</div>
       <h1>Query</h1>
+
+      <iron-ajax
+    id="ajax"
+    auto
+    url="http://xahiru.local:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK"
+    method="get"
+    last-response="{{itemstokens}}"
+    handle-as="json">
+  </iron-ajax>
       
-      <form is = "iron-form" method = "get" action = "/" id = "basic"  content-type="application/json">
+      <iron-ajax id="queryGET" url="http://xahiru.local:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK" content-type="application/json" method="POST" last-response="{{status}}" on-response="_updateDelivery" handle-as="json"></iron-ajax>
+      <form is = "iron-form" method = "get" action = "/" id = "basic5"  content-type="application/json">
          
-        <paper-dropdown-menu label="Query Type">
-          <paper-listbox slot="dropdown-content" selected="1">
-            <paper-item>Item</paper-item>
-            <paper-item>PO status</paper-item>
-            <paper-item>Money</paper-item>
-          </paper-listbox>
-        </paper-dropdown-menu>
+
+        <label id="label3">Type:</label>
+        <paper-radio-group id="tokentype5"  selected="{{selected}}" allow-empty-selection aria-labelledby="label3">
+          <paper-radio-button name="money" >Money</paper-radio-button>
+          <paper-radio-button name="item">Item</paper-radio-button>
+          <paper-radio-button name="po">PO status</paper-radio-button>
+        </paper-radio-group>
+
         <br>
+        
+          <br>
+            <div id="po">
+            <paper-dropdown-menu id="dropmenuPO" label="PO" on-selected-item-changed="_pochanged5">
+            <paper-listbox id="poList" slot="dropdown-content" selected="0">
+              <dom-repeat items="{{itemstokens}}">
+                <template>
+                  <template is="dom-if" if="[[_typecheck(item.type)]]">
+                  <paper-item value$="{{item.id}}">{{item.id}}</paper-item>
+                </template>
+                </template>
+              </dom-repeat>
+            </paper-listbox>
+          </paper-dropdown-menu>
+            </div>
+            <div id="money">
+              <paper-dropdown-menu id="dropmenuMoney" label="Currency" on-selected-item-changed="_pochanged5">
+            <paper-listbox id="moneyList" slot="dropdown-content" selected="0">
+              <dom-repeat items="{{itemstokens}}">
+                <template>
+                  <template is="dom-if" if="[[_typecheck(item.type)]]">
+                  <paper-item value$="{{item.details.name}}">{{item.details.name}}</paper-item>
+                </template>
+                </template>
+              </dom-repeat>
+            </paper-listbox>
+          </paper-dropdown-menu>
+          <br>
+          <paper-checkbox id="moneychbxhistory">history</paper-checkbox>
+          <br>
+            </div>
+
+
+         <div id="item">
+          <paper-dropdown-menu id="dropmenuItem" label="Item" on-selected-item-changed="_pochanged5">
+            <paper-listbox id="itemList" slot="dropdown-content" selected="0">
+              <dom-repeat items="{{itemstokens}}">
+                <template>
+                  <template is="dom-if" if="[[_typecheck(item.type)]]">
+                  <paper-item value$="{{item.id}}">{{item.details.name}}</paper-item>
+                </template>
+                </template>
+              </dom-repeat>
+            </paper-listbox>
+          </paper-dropdown-menu>
+           <paper-input id="batchid" class = "paperinput" type="number"  name = "item-price" label = "batch No [optional]" value="{{batch}}"></paper-input>
+           <br>
+           <paper-checkbox id="chbxhistory">history</paper-checkbox>
+          <br>
+          <br>
+          <paper-button id="btnscan" class = "paperbtn" raised on-click = "scanClick">scan Item</paper-button>
+  
+          <br>
+        </div>
+
+          <br>
         <br>
-         <paper-button class = "paperbtn" raised onclick = "_submit(event)">view details</paper-button>
+         <paper-button class = "paperbtn" raised on-click = "_viewQuery">view details</paper-button>
          <h4>Transaction details:</h4>
          <div class = "output"></div>
+      <div id="resultGrid" hidden>
+      <vaadin-grid id="mygrid5" theme="row-dividers" items="[[mypo.details]]" column-reordering-allowed multi-sort>
+      
+      <vaadin-grid-column width="9em">
+        <template class="header">Name</template>
+        <template>[[item.name]]</template>
+      </vaadin-grid-column>
+
+      <vaadin-grid-column>
+        <template class="header">
+          Quantity
+        </template>
+        <template>[[item.amount]]</template>
+      </vaadin-grid-column>
+
+      <vaadin-grid-column>
+        <template class="header">
+          Total
+        </template>
+        <template>[[item.total]]</template>
+      </vaadin-grid-column>
+
+      <vaadin-grid-column width="350px">
+        <template class="header">Batch</template>
+        <template>
+           <dom-repeat items="{{item.batches}}" as="batch" index-as="batch_no">
+              <template>
+                 <template is="dom-if" if="[[_indexcheck(batch_no)]]">
+                 <paper-item> <paper-item class="batch">Batch ID</paper-item> <paper-item class="batch">Amount</paper-item> <paper-item class="batch">Status</paper-item> </paper-item>
+                </template>
+                  <paper-item class="batchitems7">
+                      <paper-item>[[batch.batch]]</paper-item><paper-input type="number" label="[[batch.amount]]"> </paper-input> <paper-item > [[_getStatus(batch.status)]]</paper-item>
+                 </paper-item>
+              </template>
+            </dom-repeat>
+        </template>
+      </vaadin-grid-column>
+
+    </vaadin-grid>
+    </div>
+
       </form>
 
     </div>
@@ -49,6 +157,132 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <script>
     class MyView5 extends Polymer.Element {
       static get is() { return 'my-view5'; }
+
+      static get properties() {
+      return {
+        selected: {
+          type: String,
+          notify: true,
+          value: 'item'
+        },
+        tokenName: {
+          type: String,
+          value: ''
+        },
+        itemstokens: {
+          type: Array,
+          notify: true,
+          value: function() {
+            return [];
+          }
+        }
+      }
+    }
+
+    _typecheck(s){
+      console.log(s);
+      // console.log(this.type);
+
+      if (s == this.selected) {
+          return true;
+        } else {
+          return false;
+        }
+
+      }
+      _pochanged5(e){
+        let s = e.target.value;
+        this.tokenName = s;
+        // console.log("selectionchangesfrommenu");
+        // console.log(this.selected);
+      }
+
+    _viewQuery(){
+      var ajaxget = this.$.queryGET;
+      var type = this.selected;
+      var name = "";
+      var batch = "";
+      var history = false;
+
+      var ajaxbody;
+
+      if(type == 'money'){
+        name = this.$.moneyList.value;
+        history = this.$.moneychbxhistory.hasAttribute('checked');
+
+        ajaxbody = JSON.stringify({type: "money", name: name, history: history});
+
+      }else if(type == 'item'){
+         name = this.tokenName;
+         history = this.$.chbxhistory.hasAttribute('checked');
+         batch = this.$.batchid.value;
+
+         console.log(name);
+         console.log(history);
+         console.log(batch);
+
+         // ajaxbody = JSON.stringify({type: "item", name: name, batch: batch, history: history});
+
+
+      }else{
+        name = this.$.poList.value;
+        // ajaxbody = JSON.stringify({type:"po", details: {po: name, status: [] });
+      }
+      // console.log(ajaxbody);
+      //FOR testing poid
+      // var ajaxbody = JSON.stringify({type:"po", status: "delivered", details: itemList, id: poid});
+      // ajaxget.body = ajaxbody;
+
+      // ajaxget.generateRequest();
+
+      // var name = this.$.selecteItem.value;
+      // var amount = this.amount;
+      // // var to = this.to;
+      // var to = this.$.receiver.value;
+
+
+      // this.$.resultGrid.removeAttribute('hidden');
+
+
+      this.$.resultGrid.hidden = false;
+
+
+    }
+    ready(){
+      super.ready();
+      var me = this; 
+      var form = this.$.basic5;
+      me.$.po.hidden = true;
+      me.$.money.hidden = true;
+
+          this.$.tokentype5.addEventListener('click', function(){
+          form.querySelector('.output').innerHTML = '';
+          me.$.resultGrid.hidden = true;
+          // form.querySelector('.output2').innerHTML = '';
+          
+          if (this.selected == 'money') {
+            me.$.money.hidden = false;
+            // me.$.dropmenu.setAttribute('label', "Currency");
+            me.$.item.hidden = true;
+            me.$.po.hidden = true;
+           
+          } else if (this.selected == 'item' ){
+            me.$.money.hidden = true;
+            me.$.item.hidden = false;
+            me.$.po.hidden = true;
+            
+          }else if (this.selected == 'po' ){
+             me.$.money.hidden = true;
+             // me.$.dropmenu.setAttribute('label', "PO");
+            me.$.item.hidden = true;
+            me.$.po.hidden = false;
+          
+          }
+          me.$.ajax.generateRequest();
+
+        });
+    }
+
     }
 
     window.customElements.define(MyView5.is, MyView5);
