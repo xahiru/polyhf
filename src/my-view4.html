@@ -33,15 +33,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       handle-as="json">
       </iron-ajax>
 
+      <iron-ajax id="transferItemPOST" url="http://xahiru.local:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK" content-type="application/json" method="POST" last-response="{{status}}" on-response="_updateTransfer" handle-as="json"></iron-ajax>
+
       <form is = "iron-form" method = "get" action = "/" id = "basic4"  content-type="application/json">
-          <div class="from">From: {{from}}</div>
+          
+        
+        <label id="label3">Type:</label>
+        <paper-radio-group id="tokentype"  selected="[[type]]" allow-empty-selection aria-labelledby="label3">
+          <paper-radio-button name="money" >Money</paper-radio-button>
+          <paper-radio-button name="item">Item</paper-radio-button>
+        </paper-radio-group>
+         <br>
+         <div class="from">From: {{from}}</div>
+         <br>
+
          <paper-dropdown-menu label="To">
-            <paper-listbox slot="dropdown-content" selected="1">
-                  <paper-item>[[to]]</paper-item>       
+            <paper-listbox id="receiver" slot="dropdown-content" selected="0">
+                  <paper-item value$="[[to]]">[[to]]</paper-item>       
             </paper-listbox>
           </paper-dropdown-menu>
          <br>
-           <paper-dropdown-menu  label="Item" on-selected-item-changed="change">
+
+           <paper-dropdown-menu  label="Item">
             <paper-listbox id="selectedItem" slot="dropdown-content" selected="0">
               <dom-repeat items="{{itemstokens}}">
                 <template>
@@ -52,12 +65,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               </dom-repeat>
             </paper-listbox>
           </paper-dropdown-menu>
-        <paper-button class = "paperbtn" raised on-click="_scanItem4">Scan</paper-button>
+        <paper-button id="scanbtn" class = "paperbtn" raised on-click="_scanItem4">Scan</paper-button>
         <br>
         <paper-input class = "paperinput" name = "po-amount" label = "amount" value="{{amount}}" required></paper-input>
         <br>
         <br>
-         <paper-button class = "paperbtn" raised on-click = "_submit(event)">Send</paper-button>
+         <paper-button class = "paperbtn" raised on-click = "_transfer">Send</paper-button>
          <h4>Transaction details:</h4>
          <div id = "output"></div>
       </form>
@@ -77,7 +90,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               type: Array,
               value: function() {
               return [];
-                  }
+                  },
+              observer: '_pochanged'
+            },
+          type: {
+              type: String,
+              value: 'item'
+            },
+          amount: {
+              type: String,
+              value: '0'
             },
           from: {
               type: String,
@@ -90,7 +112,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
         }
       _typecheck(s){
-        if (s == 'item') {
+        if (s == this.type) {
           return true;
 
         } else {
@@ -99,19 +121,67 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       _scanItem4(){
           setPageData("my-view4");
-          // this.$.basic4.action = '/qr';
-          // this.$.basic4.allowRedirect = false;
+          this.$.basic4.action = '/qr';
+          this.$.basic4.allowRedirect = false;
       //     // console.log(me.$.qrcode);
-          // this.$.basic4.submit() //we'll change this to iron-ajax later
+          this.$.basic4.submit() //we'll change this to iron-ajax later
 
         // console.log("changing");
         // this.$.selectedPo.selected = 2;
-        setTokenName("6902083881412");
+        //FOR Testing
+        // setTokenName("6902083881412");
       }
 
-      change(e){
-      // this.mypo = po;
-      console.log(e.target.value);
+    //   change(e){
+    //   // this.mypo = po;
+    //   console.log(e.target.value);
+    // }
+    _pochanged(){
+      console.log(this.$.selectedItem.value);
+    }
+    _transfer(){
+      var ajaxput = this.$.transferItemPOST;
+      var type = this.type;
+      var name = this.$.selectedItem.value;
+      var amount = this.amount;
+      // var to = this.to;
+      var to = this.$.receiver.value
+
+      var details = {
+        name      : name,         // String.  Unique name of the item (use the scanned QR code)
+        amount    : amount,         // Integer. Amount of item to transfer.
+        recipient : to         // String.  Organization name of the recipient. Eg: Org1, Org2, Org3
+        // batch     : "",         // [OPTIONAL] Integer. Batch ID of the items to transfer. This limits the transfer to items of the given batch.
+    };
+
+      //FOR testing
+         ajaxput.method = "PUT";
+
+
+         var ajaxbody = JSON.stringify({type: type, status: "tranfered", details: details});
+
+          console.log(ajaxbody);
+          ajaxput.body = ajaxbody;
+          ajaxput.generateRequest();
+
+
+    }
+    _updateTransfer(e){
+      var response = e.detail.xhr.response; 
+
+        console.log(response);
+        // console.log(suc.success);
+
+        if (response) {       
+        // if (suc.success == true) {
+
+          var item = response.details;
+          this.$.basic4.querySelector('#output').innerHTML = "Item tranfered";
+          //set
+
+          this.$.ajax.generateRequest();
+          
+        }
     }
 
 
@@ -144,6 +214,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       //   this.$.basic.addEventListener('click', function(e){ 
       //     alert("hheh"); 
       // });
+         this.$.tokentype.addEventListener('click', function(){
+          // form.querySelector('.output').innerHTML = '';
+              if (this.selected == 'money') {
+                me.$.scanbtn.hidden = true;
+                me.type = 'money';
+               
+              } else {
+                me.$.scanbtn.hidden = false;
+                 me.type = 'item';
+              }
+              me.$.ajax.generateRequest();
+              
+
+          });
+
+
 
       }
 

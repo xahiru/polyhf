@@ -46,12 +46,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     handle-as="json">
   </iron-ajax>
 
+   <iron-ajax id="recievePOPOST" url="http://xahiru.local:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK" content-type="application/json" method="POST" last-response="{{status}}" on-response="_updateRecived" handle-as="json"></iron-ajax>
+
     <paper-dropdown-menu label="PO" on-selected-item-changed="_pochanged7">
       <paper-listbox id="selectedPo7" slot="dropdown-content" selected="1">
         <dom-repeat items="{{itemstokens}}">
           <template>
             <template is="dom-if" if="[[_typecheck(item.type)]]">
-              <paper-item value$="{{item}}">{{item.id}}</paper-item>
+              <paper-item value$="[[item.id]]">PO:[[item.id]] Status: [[item.status]]</paper-item>
             </template>
           </template>
         </dom-repeat>
@@ -101,8 +103,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                  <template is="dom-if" if="[[_indexcheck(batch_no)]]">
                  <paper-item> <paper-item class="batch">Batch ID</paper-item> <paper-item class="batch">Amount</paper-item> <paper-item class="batch">Status</paper-item> </paper-item>
                 </template>
-                  <paper-item class="batchitems">
-                      <paper-item class="batch">[[batch.batch]]</paper-item><paper-input id="amnt" type="number" label="[[batch.amount]]" class="batch"> </paper-input> <paper-item class="batch"> [[_getStatus(batch.status)]]</paper-item>
+                  <paper-item class="batchitems7">
+                      <paper-item>[[batch.batch]]</paper-item><paper-input type="number" label="[[batch.amount]]"> </paper-input> <paper-item > [[_getStatus(batch.status)]]</paper-item>
                  </paper-item>
               </template>
             </dom-repeat>
@@ -154,18 +156,34 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
     _pochanged7(e){
       var index = 0;
+    // if(this.$.selectedPo7.querySelector('.iron-selected') != null){
+    //     console.log(this.$.selectedPo7.querySelector('.iron-selected').getAttribute("value"));
+    //     index = this.$.selectedPo7.querySelector('.iron-selected').getAttribute("value");
+    //   }
+
+      let s = e.target.value;
+      let result = s.match(/\d+/g).map(n => parseInt(n));
+
+      // console.log(result);
+
       for (var i = 0; i < this.itemstokens.length; i++) {
-       if(this.itemstokens[i].id == e.target.value){
+       if(this.itemstokens[i].id == result){
           index = i;
        } 
       }
 
      this.mypo = this.itemstokens[index]
+
      this.$.itemnofound7.innerHTML = '';
      var uncheck = this.$.mygrid7.querySelectorAll('paper-checkbox');
      for (var i = 0; i < uncheck.length; i++) {
        uncheck[i].removeAttribute("checked");
      }
+
+      // var inputs = this.$.mygrid7.querySelectorAll('paper-input');
+      // for (var j = 0; j < inputs.length; j++) {
+      //   inputs[i].value = '';
+      // }
 
 
     }
@@ -211,9 +229,29 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           // setTokenName("my-view6");
       }
 
+      _updateRecived(e){
+        //TODOshould include updating the currency total 
+         var response = e.detail.xhr.response; 
+
+        console.log(response);
+        // console.log(suc.success);
+
+        if (response) {       
+        // if (suc.success == true) {
+
+          var item = response.details;
+          this.$.basic7.querySelector('.output').innerHTML = "PO Recieved";
+          //set
+
+          this.$.ajax.generateRequest();
+          
+        }
+    
+      }
+
       _recieveOrder(){
 
-        var  ajaxput = this.$.deliverPOPOST;
+        var  ajaxput = this.$.recievePOPOST;
         var contents = this.$.mygrid7.getElementsByTagName('vaadin-grid-cell-content');
         var poid = this.mypo.id;
         console.log(poid);
@@ -230,20 +268,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           var itemname = contents[i+1].textContent.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
           //.querySelector('.batchitems')
           console.log(itemname);
-          console.log(contents[i+4]);
-          var contents2 = contents[i+3].querySelectorAll('.batchitems');
+          // console.log(contents[i+4]);
+          var contents2 = contents[i+4].querySelectorAll('.batchitems7');
           var batchList = [];
+          // console.log(contents[i+4]);
+          // console.log(contents2);
 
           for (var j = 0; j < contents2.length; j++) {
             
-            var innerInput = contents2[j].querySelectorAll('paper-input');
+            var itembatchno = contents2[j].children[0].firstChild.data;
+            var itemamount = contents2[j].children[1].value;
+            if(itemamount == ""){
+              itemamount = 0;
+            }
 
              
-                console.log(innerInput);
+                // console.log(itembatchno);
+                // console.log(itemamount);
+
                 // var itemamount = innerInput.value;
                 // var itembatchno = innerCheckbox.value ;
 
-                 // batchList.push({batch: itembatchno, amount: itemamount});
+                 batchList.push({batch: itembatchno, amount: itemamount});
                 // console.log(innerCheckbox.value);
                 // console.log(innerInput.value);
 
@@ -258,6 +304,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        }
         }//end of if
         }// end of outer for
+
+        console.log(itemList);
+        //FOR testing
+         ajaxput.method = "PUT";
+         var ajaxbody = JSON.stringify({type:"po", status: "received", details: itemList, id: poid});
+
+          console.log(ajaxbody);
+          ajaxput.body = ajaxbody;
+          ajaxput.generateRequest();
+
+
       }
 
     }

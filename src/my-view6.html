@@ -51,7 +51,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <form is = "iron-form" method = "get" action = "/" id = "basic6"  content-type="application/json">
     <paper-dropdown-menu label="PO" on-selected-item-changed="_pochanged">
-      <paper-listbox id="selectedPo6" slot="dropdown-content" selected="0">
+      <paper-listbox id="selectedPo6"  slot="dropdown-content" selected="0">
         <dom-repeat items="{{itemstokens}}">
           <template>
             <template is="dom-if" if="[[_typecheck(item.type)]]">
@@ -159,23 +159,32 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     _pochanged(e){
       var index = 0;
-      // for (var i = 0; i < this.itemstokens.length; i++) {
-      //  if(this.itemstokens[i].id == e.target.value){
-      //     index = i;
-      //  } 
-      // }
+      // var stringvalue = e.target;
+      // console.log("target"+ e.target.tagName);
+      let s = e.target.value;
+      let result = s.match(/\d+/g).map(n => parseInt(n));
+
+      // console.log(result);
+
+      for (var i = 0; i < this.itemstokens.length; i++) {
+       if(this.itemstokens[i].id == result){
+          index = i;
+       } 
+      }
 
       // var tech = [];
       // tech[0] = this.itemstokens[index];
       // this.mypo = tech;
-      // console.log(e.target.value);
-      if(this.$.selectedPo6.querySelector('.iron-selected') != null){
-        // console.log(this.$.selectedPo6.querySelector('.iron-selected').getAttribute("value"));
-        index = this.$.selectedPo6.querySelector('.iron-selected').getAttribute("value");
-      }
+      console.log(e.target.value);
+      console.log("index" + index);
+
+      // if(this.$.selectedPo6.querySelector('.iron-selected') != null){
+      //   // console.log(this.$.selectedPo6.querySelector('.iron-selected').getAttribute("value"));
+      //   index = this.$.selectedPo6.querySelector('.iron-selected').getAttribute("value");
+      // }
       
      this.mypo = this.itemstokens[index]
-     // console.log(this.mypo.details);
+     console.log("Poid"+this.mypo.id);
       // this.mypo = this.itemstokens;
       
       // console.log(this.itemstokens);
@@ -324,9 +333,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.$.ajax.generateRequest();
           
         }
-        this.tokenName = ''; 
-        this.price = '';
-        this.amount = '';
+      
 
         
       }
