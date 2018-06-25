@@ -31,8 +31,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
 
     <div class="card">
-      <div class="circle">7</div>
+      <div class="circle">6</div>
       <h1>Recieve</h1>
+      <div id="notlogggedin">This page is available to members of Org2 (dealers) </div>
+      <div id="loggedin"  hidden> 
       <p>Select the PO and then enter the amount of items received from each batch</p>
       <p>Scan QR/Bar code to select the item</p>
       <form is = "iron-form" method = "get" action = "/" id = "basic7"  content-type="application/json">
@@ -49,7 +51,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    <iron-ajax id="recievePOPOST" url="http://xahiru.local:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK" content-type="application/json" method="POST" last-response="{{status}}" on-response="_updateRecived" handle-as="json"></iron-ajax>
 
     <paper-dropdown-menu label="PO" on-selected-item-changed="_pochanged7">
-      <paper-listbox id="selectedPo7" slot="dropdown-content" selected="1">
+      <paper-listbox id="selectedPo7" slot="dropdown-content" selected="0">
         <dom-repeat items="{{itemstokens}}">
           <template>
             <template is="dom-if" if="[[_typecheck(item.type)]]">
@@ -119,6 +121,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          <h4>Transaction details:</h4>
          <div class = "output"></div>
       </form>
+    </div>
 
     </div>
 
@@ -219,6 +222,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           
         }
       }
+      ready(){
+        super.ready();
+        // if(this.itemstokens == null){
+        //   this.mypo = this.itemstokens[0];
+        //   console.log(mypo);
+        // }
+
+        var orgType = getCookie("orgname");
+
+        console.log(orgType);
+
+        if(orgType=='Org1'){
+          this.$.notlogggedin.hidden = false;
+          this.$.loggedin.hidden = true;
+          // console.log(this.$.tokentype.children[2]);
+        }else if (orgType=='Org2'){
+          this.$.notlogggedin.hidden = true;
+          this.$.loggedin.hidden = false;
+        }
+
+      }
+
        _scanClick7(){
           setPageData("my-view7");
           this.$.basic7.action = '/qr';

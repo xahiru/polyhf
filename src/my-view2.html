@@ -22,7 +22,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
 
     <div class="card">
-      <div class="circle">2</div>
+      <div class="circle">2-4</div>
       <h1>Token Creation</h1>
 
       <iron-ajax
@@ -69,7 +69,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <div id="po" hidden>
           <div class="powrapper">
           <paper-dropdown-menu label="Item Type">
-            <paper-listbox slot="dropdown-content" selected="1">
+            <paper-listbox slot="dropdown-content" selected="0">
               <dom-repeat items="{{itemstokens}}">
                 <template>
                   <template is="dom-if" if="[[_typecheck(item.type)]]">
@@ -89,7 +89,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        
          <paper-button id="btncreate" class = "paperbtn" raised on-click = "createClick">Create</paper-button>
          
-
         
          <h4>Transaction details:</h4>
           <div class = "output"></div>
@@ -124,7 +123,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           },
           restURL: {
               type: String,
-              value: 'xahiru.local:3000'
+              value: 'http://kris.local:4000/users'
 
           },
           amount: {
@@ -148,7 +147,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
         }
       }
-
         static get observers() {
         return [
           'itemstokensAddedOrRemoved(itemstokens.splices)'
@@ -172,23 +170,36 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         console.log(response);
         // console.log(suc.success);
 
-        if (response) {       
-        // if (suc.success == true) {
+        // if (response) {       
+        if (response.success == true) {
 
           if(response.type == 'item'){
-            var item = response.details;
-             this.$.basic2.querySelector('.output').innerHTML = item.amount+" "+item.name+ "item token created ";
+            // var item = response.details;
+             this.$.basic2.querySelector('.output').innerHTML = response.amount+" "+response.name+ "item token created ";
             // console.log('ITeM');
           }else if (response.type == 'money'){
-          var item = response.details;
-          this.$.basic2.querySelector('.output').innerHTML = item.amount+" "+item.name+ "money token created ";
+          // var item = response.details;
+          this.$.basic2.querySelector('.output').innerHTML = "TxId: "+ response.tx_id+ " <br>"+ response.amount +" "+ response.name+ "created <br>"+"Now you have total of "+response.sum+" "+ response.name;
 
 
-        }else{
+        }else if (response.type == 'po'){
           var item = response.details;
           this.$.basic2.querySelector('.output').innerHTML = "PO created ";
         }
           
+        }else{
+
+          if(response.type == 'item'){
+            this.$.basic2.querySelector('.output').innerHTML = "Item creation failed <br>"+ "message:"+response.message;
+          }
+            else if (response.type == 'money'){
+              this.$.basic2.querySelector('.output').innerHTML = "Money creation failed <br>"+ "message:"+response.message;
+            }
+              else if (response.type == 'po'){
+                this.$.basic2.querySelector('.output').innerHTML = "PO creation failed <br>"+ "message:"+response.message;
+              }
+
+
         }
         this.tokenName = ''; 
         this.price = '';
@@ -221,6 +232,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       createClick(e) {
 
         var selector = this.$.tokentype;
+
+        //TODO 
+        // change url of the following aja
+        
+
         var ajax = this.$.creatItemPOST;
         var ajaxbody;
 
@@ -281,6 +297,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
           console.log(ajaxbody);
           ajax.body = ajaxbody;
+          ajax.url = "http://kris.local:4000/channels/mychannel/chaincodes/escrow/create";
+          ajax.headers['authorization']= 'Bearer '+ getCookie("authToken");
           ajax.generateRequest();
       }
 
@@ -295,7 +313,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       ready() {
         super.ready();
 
-        this.restURL = getRESTURL();
+        // this.restURL = getRESTURL();
+        this.restURL = "http://kris.local:4000/channels/mychannel/chaincodes/escrow/names?owner=true";
+
+        var getItemAjax = this.$.ajax;
+        console.log('getCookie("authToken")');
+        console.log(getCookie("authToken"));
+
+        getItemAjax.headers['authorization']= 'Bearer '+ getCookie("authToken");
+        getItemAjax.url = this.restURL;
+
 
         // console.log(this.$.tokentype)
         var me = this;

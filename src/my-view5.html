@@ -22,7 +22,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
 
     <div class="card">
-      <div class="circle">5</div>
+      <div class="circle">8</div>
       <h1>Query</h1>
 
       <iron-ajax
@@ -35,6 +35,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </iron-ajax>
       
       <iron-ajax id="queryGET" url="http://xahiru.local:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK" content-type="application/json" method="POST" last-response="{{status}}" on-response="_updateDelivery" handle-as="json"></iron-ajax>
+      
       <form is = "iron-form" method = "get" action = "/" id = "basic5"  content-type="application/json">
          
 
@@ -85,7 +86,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               <dom-repeat items="{{itemstokens}}">
                 <template>
                   <template is="dom-if" if="[[_typecheck(item.type)]]">
-                  <paper-item value$="{{item.id}}">{{item.details.name}}</paper-item>
+                  <paper-item value$="{{item.details.name}}">{{item.details.name}}</paper-item>
                 </template>
                 </template>
               </dom-repeat>
@@ -96,7 +97,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
            <paper-checkbox id="chbxhistory">history</paper-checkbox>
           <br>
           <br>
-          <paper-button id="btnscan" class = "paperbtn" raised on-click = "scanClick">scan Item</paper-button>
+          <paper-button id="btnscan" class = "paperbtn" raised on-click ="_scanQueryClick">scan Item</paper-button>
   
           <br>
         </div>
@@ -180,7 +181,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
 
     _typecheck(s){
-      console.log(s);
+      // console.log(s);
       // console.log(this.type);
 
       if (s == this.selected) {
@@ -195,6 +196,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.tokenName = s;
         // console.log("selectionchangesfrommenu");
         // console.log(this.selected);
+      }
+      _scanQueryClick(){
+         setPageData("my-view5");
+          this.$.basic5.action = '/qr';
+          this.$.basic5.allowRedirect = false;
+          this.$.basic5.submit()
+          //FOR TESTING
+          // setTokenName("Lisptick101");
       }
 
     _viewQuery(){
@@ -217,18 +226,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          history = this.$.chbxhistory.hasAttribute('checked');
          batch = this.$.batchid.value;
 
-         console.log(name);
-         console.log(history);
-         console.log(batch);
+         // console.log(name);
+         // console.log(history);
+         // console.log(batch);
 
-         // ajaxbody = JSON.stringify({type: "item", name: name, batch: batch, history: history});
+         ajaxbody = JSON.stringify({type: "item", name: name, batch: batch, history: history});
+         // console.log(ajaxbody);
+
+
 
 
       }else{
-        name = this.$.poList.value;
-        // ajaxbody = JSON.stringify({type:"po", details: {po: name, status: [] });
+
+        name = this.$.poList.querySelectorAll('paper-item.iron-selected')[0].value;
+        console.log(name);
+        var details = {po: name, status: []};
+
+        ajaxbody = JSON.stringify({type:"po", details: details});
       }
-      // console.log(ajaxbody);
+      console.log(ajaxbody);
       //FOR testing poid
       // var ajaxbody = JSON.stringify({type:"po", status: "delivered", details: itemList, id: poid});
       // ajaxget.body = ajaxbody;

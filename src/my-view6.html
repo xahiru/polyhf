@@ -35,8 +35,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
   <div class="card">
-    <div class="circle">6</div>
+    <div class="circle">5</div>
     <h1>Deliver</h1>
+
+    <div id="notlogggedin">This page is available to members of Org1 (NFSQ staffs)</div>
+    <div id="loggedin"  hidden> 
+    <br>
 
     <iron-ajax
     id="ajax"
@@ -129,6 +133,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <h4>Order status:</h4>
     <div class = "output"></div>
   </form>
+
+</div>
   
 </div>
 
@@ -242,6 +248,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         //   this.mypo = this.itemstokens[0];
         //   console.log(mypo);
         // }
+
+        var orgType = getCookie("orgname");
+
+        console.log(orgType);
+
+        if(orgType=='Org1'){
+          this.$.notlogggedin.hidden = true;
+          this.$.loggedin.hidden = false;
+          // console.log(this.$.tokentype.children[2]);
+        }else if (orgType=='Org2'){
+          this.$.notlogggedin.hidden = false;
+          this.$.loggedin.hidden = true;
+        }
+
       }
 
       _scanClick(){

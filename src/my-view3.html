@@ -22,7 +22,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
 
     <div class="card">
-      <div class="circle">3</div>
+      <div class="circle">1</div>
       <h1>Register</h1>
       <p>This form sends the User registertaion request to the Nodejs adgent on the Docker container</p>
       <p>Its a one-time-event for each participant</p>
@@ -40,17 +40,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <iron-ajax
       id="ajaxGetOrg"
       auto
-      url="http://xahiru.local:3000/orgs"
+      url="http://kris.local:4000/orgs"
       method="GET"
       last-response="{{organizations}}"
       handle-as="json">
       </iron-ajax>
 
-      <iron-ajax content-type="application/json" id="registerPOSTORi" url="http://xahiru.local:3000" method="POST" last-response="{{status}}" on-response="_refresh" handle-as="json"></iron-ajax>
       
-      <iron-ajax content-type="application/json" id="registerPOST" url="http://xahiru.local:3000/api/myusers?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK" method="POST" last-response="{{status}}" on-response="_refresh" handle-as="json"></iron-ajax>
-
-      <iron-ajax content-type="application/json" id="testPOST" url="http://xahiru.local:3000" method="POST" last-response="{{status}}" handle-as="json"></iron-ajax>
+      <iron-ajax content-type="application/json" id="registerPOST" url="http://kris.local:4000/users" method="POST" last-response="{{status}}" on-response="_refresh" handle-as="json"></iron-ajax>
 
 
      
@@ -161,10 +158,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               return [];
                   }
             },
-
             username: {
               type: String,
               value: 'user1'
+          },
+          restURL: {
+              type: String,
+              value: 'http://kris.local:4000/users'
           },
           orgname: {
             type: String,
@@ -181,9 +181,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         console.log(suc);
         console.log(suc.success);
 
-       if (suc) {
-        // if (suc.success == true) {
+       // if (suc) {
+        if (suc.success == true) {
           // this.$.basic.querySelector('.output').innerHTML = e.detail.xhr.responseText;
+          this.$.basic.querySelector('.output').innerHTML = "successful";
           setCookie("username", this.username, 365);
           setCookie("orgname",this.orgname,365);
           setCookie("authToken",suc.token,365);
@@ -233,7 +234,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
                   console.log(this.$.registerPOST);
 
-                  // this.$.registerPOST.url = 
+                  this.$.registerPOST.url = this.restURL;
                   this.$.registerPOST.generateRequest();
 
 
@@ -293,8 +294,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var btnregister = this.$.btnregister;
 
       // test usrl
-       var testurl="http://xahiru.local:3000/api/orgs?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK";
-       this.$.ajaxGetOrg.url = testurl;
+       // var testurl="http://kris.local:4000/users";
+       // this.$.ajaxGetOrg.url = testurl;
+       this.restURL = "http://kris.local:4000/users";
 
       var user = getCookie("username");
       var org = getCookie("orgname");

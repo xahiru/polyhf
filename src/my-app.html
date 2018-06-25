@@ -110,12 +110,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
         <app-toolbar>Menu</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="view2" href="[[rootPath]]view2">Create Item/Order/Money</a>
           <a name="view3" href="[[rootPath]]view3">Register</a>
-          <a name="view4" href="[[rootPath]]view4">Transfer</a>
-          <a name="view5" href="[[rootPath]]view5">Query</a>
+          <a name="view2" href="[[rootPath]]view2">Create Item/Order/Money</a>
           <a name="view6" href="[[rootPath]]view6">Deliver</a>
           <a name="view7" href="[[rootPath]]view7">Recieve</a>
+          <a name="view4" href="[[rootPath]]view4">Transfer</a>
+          <a name="view5" href="[[rootPath]]view5">Query</a>
+          
         </iron-selector>
       </app-drawer>
 
@@ -333,6 +334,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         // dropdownItems[index4].setAttribute('class',"iron-selected");
         document.querySelector('my-app').shadowRoot.querySelector('app-drawer-layout').querySelector('iron-pages').querySelector('.iron-selected').shadowRoot.querySelector('.card').querySelector('#selectedItem').setAttribute('selected',index4);
+
+
+      }else
+      if(this.pageData == 'my-view5'){
+
+        var dropdownItems = document.querySelector('my-app').shadowRoot.querySelector('app-drawer-layout').querySelector('iron-pages').querySelector('.iron-selected').shadowRoot.querySelector('.card').querySelector('#itemList').querySelectorAll('paper-item');
+
+
+        var index4 = 0;
+        for (var i = 0; i < dropdownItems.length; i++) {
+          // console.log(dropdownItems[i].getAttribute("value"));
+          
+          if (dropdownItems[i].getAttribute("value") == data) {
+            // console.log(dropdownItems[i].getAttribute("value"));
+            index4 = i;
+          }
+        }
+
+        // dropdownItems[index4].setAttribute('class',"iron-selected");
+        document.querySelector('my-app').shadowRoot.querySelector('app-drawer-layout').querySelector('iron-pages').querySelector('.iron-selected').shadowRoot.querySelector('.card').querySelector('#itemList').setAttribute('selected',index4);
 
 
       }
