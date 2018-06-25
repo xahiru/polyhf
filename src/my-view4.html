@@ -67,7 +67,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </paper-dropdown-menu>
         <paper-button id="scanbtn" class = "paperbtn" raised on-click="_scanItem4">Scan</paper-button>
         <br>
-        <paper-input class = "paperinput" name = "po-amount" label = "amount" value="{{amount}}" required></paper-input>
+        <paper-input class = "paperinput" name = "item-amount" label = "amount" value="{{amount}}" required></paper-input>
+        <br>
+        <paper-input id="inptbatch" class = "paperinput" name = "item-batch" label = "BatchID" value="{{batch}}"></paper-input>
         <br>
         <br>
          <paper-button class = "paperbtn" raised on-click = "_transfer">Send</paper-button>
@@ -97,6 +99,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               type: String,
               value: 'item'
             },
+          batch: {
+              type: String,
+              value: ''
+            },
           amount: {
               type: String,
               value: '0'
@@ -105,9 +111,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               type: String,
               value: ''
             },
+          restURL: {
+              type: String,
+              value: 'http://kris.local:4000/users'
+
+          },
           to: {
               type: String,
-              value: ''
+              value: 'Org2'
             }
           }
         }
@@ -136,29 +147,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     //   // this.mypo = po;
     //   console.log(e.target.value);
     // }
-    _pochanged(){
+    _pochanged(e){
       console.log(this.$.selectedItem.value);
     }
     _transfer(){
       var ajaxput = this.$.transferItemPOST;
+          ajaxput.url = "http://kris.local:4000/channels/mychannel/chaincodes/escrow/transfer"
+
       var type = this.type;
       var name = this.$.selectedItem.value;
       var amount = this.amount;
-      // var to = this.to;
-      var to = this.$.receiver.value
+      var to = this.to;
+      // var to = this.$.receiver.value
+      var batch = this.batch;
+
 
       var details = {
         name      : name,         // String.  Unique name of the item (use the scanned QR code)
         amount    : amount,         // Integer. Amount of item to transfer.
-        recipient : to         // String.  Organization name of the recipient. Eg: Org1, Org2, Org3
-        // batch     : "",         // [OPTIONAL] Integer. Batch ID of the items to transfer. This limits the transfer to items of the given batch.
+        recipient : to,        // String.  Organization name of the recipient. Eg: Org1, Org2, Org3
+        batch     : batch         // [OPTIONAL] Integer. Batch ID of the items to transfer. This limits the transfer to items of the given batch.
     };
 
       //FOR testing
-         ajaxput.method = "PUT";
+         // ajaxput.method = "PUT";
+         // var ajaxbody = JSON.stringify({type: type, status: "tranfered", details: details});
 
-
-         var ajaxbody = JSON.stringify({type: type, status: "tranfered", details: details});
+          var ajaxbody = JSON.stringify({type: type, details: details});
 
           console.log(ajaxbody);
           ajaxput.body = ajaxbody;
@@ -172,16 +187,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         console.log(response);
         // console.log(suc.success);
 
-        if (response) {       
-        // if (suc.success == true) {
+        // if (response) {       
+        if (response.success == true) {
 
-          var item = response.details;
-          this.$.basic4.querySelector('#output').innerHTML = "Item tranfered";
+          var batches = response.batches;
+          var batchdetails = "<br>";
+          for (var i = 0; i < batches.length; i++) {
+            batchdetails.concat("<br> batch: "+ batches[i].batch+" amount:"+batches[i].amount); 
+          }
+
+          this.$.basic4.querySelector('#output').innerHTML = "Item tranfered <br> "+ " message:"+response.message + "<br>TxId: "+ response.tx_id+batchdetails;
           //set
 
           this.$.ajax.generateRequest();
           
+        }else{
+
         }
+
     }
 
 
@@ -195,6 +218,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         var myorg = getCookie("orgname");
         me.from = myorg;
+        //Only returns owners' items //OWNERFALSE
+        this.restURL = "http://kris.local:4000/channels/mychannel/chaincodes/escrow/names?owner=false";
+
+        var getItemAjax = this.$.ajax;
+        console.log('getCookie("authToken")');
+        console.log(getCookie("authToken"));
+
+        getItemAjax.headers['authorization']= 'Bearer '+ getCookie("authToken");
+        getItemAjax.url = this.restURL;
 
 
         if (myorg == "Org1") {
@@ -218,11 +250,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           // form.querySelector('.output').innerHTML = '';
               if (this.selected == 'money') {
                 me.$.scanbtn.hidden = true;
+                me.$.inptbatch.hidden = true;
                 me.type = 'money';
                
               } else {
                 me.$.scanbtn.hidden = false;
-                 me.type = 'item';
+                me.$.inptbatch.hidden = false;
+                me.type = 'item';
+
               }
               me.$.ajax.generateRequest();
               

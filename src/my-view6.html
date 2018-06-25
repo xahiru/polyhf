@@ -59,7 +59,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <dom-repeat items="{{itemstokens}}">
           <template>
             <template is="dom-if" if="[[_typecheck(item.type)]]">
-              <paper-item value$="[[item.id]]">PO:[[item.id]] Status:[[item.status]]</paper-item>
+              <paper-item value$="[[item.po]]">PO:[[item.po]] Status:[[item.status]]</paper-item>
             </template>
           </template>
         </dom-repeat>
@@ -170,10 +170,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       let s = e.target.value;
       let result = s.match(/\d+/g).map(n => parseInt(n));
 
-      // console.log(result);
+      console.log("result");
+      console.log(result);
 
       for (var i = 0; i < this.itemstokens.length; i++) {
-       if(this.itemstokens[i].id == result){
+       if(this.itemstokens[i].po == result){
           index = i;
        } 
       }
@@ -190,7 +191,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       // }
       
      this.mypo = this.itemstokens[index]
-     console.log("Poid"+this.mypo.id);
+     console.log("Poid"+this.mypo.po);
       // this.mypo = this.itemstokens;
       
       // console.log(this.itemstokens);
@@ -252,6 +253,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var orgType = getCookie("orgname");
 
         console.log(orgType);
+
+        //getALLPO URL
+        this.restURL = "http://kris.local:4000/channels/mychannel/chaincodes/escrow/po?";
+
+        var getItemAjax = this.$.ajax;
+        console.log('getCookie("authToken")');
+        console.log(getCookie("authToken"));
+
+        getItemAjax.headers['authorization']= 'Bearer '+ getCookie("authToken");
+        getItemAjax.url = this.restURL;
+
 
         if(orgType=='Org1'){
           this.$.notlogggedin.hidden = true;
