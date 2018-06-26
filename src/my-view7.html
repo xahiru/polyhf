@@ -42,13 +42,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <iron-ajax
     id="ajax"
     auto
-    url="http://xahiru.local:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK"
+    url=""
     method="get"
     last-response="{{itemstokens}}"
     handle-as="json">
   </iron-ajax>
 
-   <iron-ajax id="recievePOPOST" url="http://xahiru.local:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK" content-type="application/json" method="POST" last-response="{{status}}" on-response="_updateRecived" handle-as="json"></iron-ajax>
+   <iron-ajax id="recievePOPOST" url="" content-type="application/json" method="POST" last-response="{{status}}" on-response="_updateRecived" handle-as="json"></iron-ajax>
 
     <paper-dropdown-menu label="PO" on-selected-item-changed="_pochanged7">
       <paper-listbox id="selectedPo7" slot="dropdown-content" selected="0">
@@ -260,13 +260,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         console.log(response);
         // console.log(suc.success);
-
-        if (response) {       
-        // if (suc.success == true) {
+        //FOR Testing
+        // if (response) {       
+        if (suc.success == true) {
 
           var item = response.details;
           this.$.basic7.querySelector('.output').innerHTML = "PO Recieved";
-          //set
+
+          var details = "<br>";
+          for (var i = 0; i < item.length; i++) {
+            details.concat("<br> name: "+ item[i].name + ", amount: "+ item[i].amount +" total:"+ item[i].total);
+            details.concat("<br>batches<br>");
+
+            var batches = item[i].batches;
+              for (var j = 0; j < batches.length; j++) {
+              details.concat("<br> name: "+ batches[i].batch+" amount: "+batches[i].amount+" status: "+batches[i].status); 
+            }
+          }
+
+          this.$.basic7.querySelector('.output').innerHTML = "TxId: "+ response.tx_id+ " <br> Order Status:"+ response.status + "details: <br>"+details;
 
           this.$.ajax.generateRequest();
           

@@ -27,13 +27,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        <iron-ajax
       id="ajax"
       auto
-      url="http://xahiru.local:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK"
+      url=""
       method="get"
       last-response="{{itemstokens}}"
       handle-as="json">
       </iron-ajax>
 
-      <iron-ajax id="transferItemPOST" url="http://xahiru.local:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK" content-type="application/json" method="POST" last-response="{{status}}" on-response="_updateTransfer" handle-as="json"></iron-ajax>
+      <iron-ajax id="transferItemPOST" url="" content-type="application/json" method="POST" last-response="{{status}}" on-response="_updateTransfer" handle-as="json"></iron-ajax>
 
       <form is = "iron-form" method = "get" action = "/" id = "basic4"  content-type="application/json">
           

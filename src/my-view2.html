@@ -28,15 +28,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <iron-ajax
       id="ajax"
       auto
-      url= "http://xahiru.local:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK"
+      url= ""
       method="get"
       last-response="{{itemstokens}}"
       handle-as="json">
       </iron-ajax>
 
-      <iron-ajax id="ajaxPOST" url="../data/response2.js" method="GET" last-response="{{status}}" on-response="_refresh" handle-as="text"></iron-ajax>
 
-      <iron-ajax id="creatItemPOST" url="http://xahiru.local:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK" content-type="application/json" method="POST" last-response="{{status}}" on-response="_updateCreate" handle-as="json"></iron-ajax>
+      <iron-ajax id="creatItemPOST" url="" content-type="application/json" method="POST" last-response="{{status}}" on-response="_updateCreate" handle-as="json"></iron-ajax>
 
       <form is = "iron-form" method = "get" action = "/" id = "basic2"  content-type="application/json">
          
@@ -73,7 +72,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               <dom-repeat items="{{itemstokens}}">
                 <template>
                   <template is="dom-if" if="[[_typecheck(item.type)]]">
-                  <paper-item value$="{{item.type}}">{{item.details.name}}</paper-item>
+                  <paper-item value$="{{item.details.name}}">{{item.details.name}} amount: {{item.details.amount}}</paper-item>
                 </template>
                 </template>
               </dom-repeat>
@@ -92,7 +91,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         
          <h4>Transaction details:</h4>
           <div class = "output"></div>
-         <div class = "output2">{{status}}</div>
+         <div class = "output2">
+          TxId: {{status.tx_id}}
+          <br>
+          Message: {{status.message}}
+          <br>
+         </div>
 
 
 
@@ -119,6 +123,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           moneyName: {
               type: String,
               value: ''
+
+          },
+          submitted: {
+              type: Boolean,
+              value: false
 
           },
           restURL: {
@@ -161,49 +170,68 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _refresh(e){
 
         this.$.basic2.querySelector('.output').innerHTML ='<pre> <code>'+ e.detail.xhr.responseText+'</pre></code>';
+        this.$.basic2.querySelector('.output2').hidden = true;
 
       }
       _updateCreate(e){
         //TODOshould include updating the currency total 
-         var response = e.detail.xhr.response; 
-
-        console.log(response);
-        // console.log(suc.success);
-
-        // if (response) {       
-        if (response.success == true) {
-
-          if(response.type == 'item'){
-            // var item = response.details;
-             this.$.basic2.querySelector('.output').innerHTML = response.amount+" "+response.name+ "item token created ";
-            // console.log('ITeM');
-          }else if (response.type == 'money'){
-          // var item = response.details;
-          this.$.basic2.querySelector('.output').innerHTML = "TxId: "+ response.tx_id+ " <br>"+ response.amount +" "+ response.name+ "created <br>"+"Now you have total of "+response.sum+" "+ response.name;
-
-
-        }else if (response.type == 'po'){
-          var item = response.details;
-          this.$.basic2.querySelector('.output').innerHTML = "PO created ";
+        if(this.$.btncreate.innerHTML == 'refresh'){
+          this.$.basic2.action = '/view2';
+          this.$.basic2.allowRedirect = false;
+          // console.log(me.$.qrcode);
+          this.$.basic2.submit() //we'
         }
+        else{
+
+        
+
+           var response = e.detail.xhr.response; 
           
-        }else{
+          
 
-          if(response.type == 'item'){
-            this.$.basic2.querySelector('.output').innerHTML = "Item creation failed <br>"+ "message:"+response.message;
+          console.log(response);
+          // console.log(suc.success);
+
+          // if (response) {       
+          if (response.success == true) {
+
+            this.$.basic2.querySelector('.output2').hidden = false;
+
+
+            if(response.type == 'item'){
+              // var item = response.details;
+               this.$.basic2.querySelector('.output').innerHTML = response.amount+ " item token "+response.name+" created ";
+              // console.log('ITeM');
+            }else if (response.type == 'money'){
+            // var item = response.details;
+            this.$.basic2.querySelector('.output').innerHTML = "TxId: "+ response.tx_id+ " <br>"+ response.amount +" "+ response.name+ "created <br>"+"Now you have total of "+response.sum+" "+ response.name;
+
+
+          }else if (response.type == 'po'){
+            var item = response.details;
+            this.$.basic2.querySelector('.output').innerHTML = "PO created ";
           }
-            else if (response.type == 'money'){
-              this.$.basic2.querySelector('.output').innerHTML = "Money creation failed <br>"+ "message:"+response.message;
+            
+          }else{
+
+            if(response.type == 'item'){
+              this.$.basic2.querySelector('.output').innerHTML = "Item creation failed <br>"+ "message:"+response.message;
             }
-              else if (response.type == 'po'){
-                this.$.basic2.querySelector('.output').innerHTML = "PO creation failed <br>"+ "message:"+response.message;
+              else if (response.type == 'money'){
+                this.$.basic2.querySelector('.output').innerHTML = "Money creation failed <br>"+ "message:"+response.message;
               }
+                else if (response.type == 'po'){
+                  this.$.basic2.querySelector('.output').innerHTML = "PO creation failed <br>"+ "message:"+response.message;
+                }
 
 
-        }
-        this.tokenName = ''; 
-        this.price = '';
-        this.amount = '';
+          }
+          this.tokenName = ''; 
+          this.price = '';
+          this.amount = '';
+          this.$.btncreate.innerHTML = 'refresh';
+          
+          }
 
         
       }
@@ -276,11 +304,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
                 var children = list[i].children
                 if(children.length>0){
-                  console.log(children);
-                  var poname = children[0].selectedItem.innerHTML;
+                  // console.log(children);
+                  // var poname = children[0].selectedItem.innerHTML;
+                  // var poname = children[0].selectedItem.value;
+                  var poname = children[0].querySelector('.iron-selected').getAttribute('value')
+                  // console.log(children[0].querySelector('.iron-selected').getAttribute('value'));
+
                   var poamount= children[1].value;
 
-                  console.log(children[0].selectedItem.innerHTML);
+                  // console.log(children[0].selectedItem.innerHTML);
                   console.log(children[1].value);
                   podetails.push({name: poname, amount: poamount});
 
@@ -300,12 +332,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           ajax.url = "http://kris.local:4000/channels/mychannel/chaincodes/escrow/create";
           ajax.headers['authorization']= 'Bearer '+ getCookie("authToken");
           ajax.generateRequest();
+
+
       }
 
       scanClick(){
           setPageData("my-view2");
-          this.$.basic2.action = '/qr';
-          this.$.basic2.allowRedirect = false;
+          this.$.basic2.action = '/my-view2';
+          // this.$.basic2.allowRedirect = false;
           // console.log(me.$.qrcode);
           this.$.basic2.submit() //we'll change this to iron-ajax later
       }
@@ -333,6 +367,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var orgType = getCookie("orgname");
 
         console.log(orgType);
+
+        this.$.basic2.querySelector('.output2').hidden = true;
 
         if(orgType=='Org1'){
           this.$.tokentype.children[2].disabled = true;

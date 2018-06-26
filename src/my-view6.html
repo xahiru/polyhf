@@ -45,13 +45,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <iron-ajax
     id="ajax"
     auto
-    url="http://xahiru.local:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK"
+    url=""
     method="get"
     last-response="{{itemstokens}}"
     handle-as="json">
   </iron-ajax>
 
-  <iron-ajax id="deliverPOPOST" url="http://xahiru.local:3000/api/items?access_token=6Nb2ti5QEXIoDBS5FQGWIz4poRFiBCMMYJbYXSGHWuulOuy0GTEuGx2VCEVvbpBK" content-type="application/json" method="POST" last-response="{{status}}" on-response="_updateDelivery" handle-as="json"></iron-ajax>
+  <iron-ajax id="deliverPOPOST" url="http://kris.local:4000/channels/mychannel/chaincodes/escrow/deliver" content-type="application/json" method="POST" last-response="{{status}}" on-response="_updateDelivery" handle-as="json"></iron-ajax>
 
   <form is = "iron-form" method = "get" action = "/" id = "basic6"  content-type="application/json">
     <paper-dropdown-menu label="PO" on-selected-item-changed="_pochanged">
@@ -79,6 +79,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     input {
       font: inherit;
     }
+    .TxId{font-size: 10px;};
   </style>
 
   <vaadin-grid id="mygrid" aria-label="Two-way Binding Example" items="[[mypo.details]]">
@@ -114,10 +115,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <dom-repeat items="{{item.batches}}" as="batch" index-as="batch_no">
               <template>
                  <template is="dom-if" if="[[_indexcheck(batch_no)]]">
-                 <paper-item> <paper-item class="batch">Batch ID</paper-item> <paper-item class="batch">Amount</paper-item> <paper-item class="batch">Status</paper-item> </paper-item>
+                 <paper-item> <paper-item class="batch">Batch ID</paper-item> <paper-item class="batch">Amount</paper-item> <paper-item class="batch">Status</paper-item> <paper-item> pending</paper-item></paper-item>
                 </template>
                   <paper-item class="batchitems">
-                      <paper-item ><paper-checkbox value$="[[batch.batch]]"></paper-checkbox>[[batch.batch]]</paper-item><paper-input type="number" label="[[batch.amount]]" class="batch"> </paper-input> <paper-item class="batch"> [[_getStatus(batch.status)]]</paper-item>
+                      <paper-item ><paper-checkbox value$="[[batch.batch]]"></paper-checkbox>[[batch.batch]]</paper-item><paper-input type="number" label="[[batch.pending]]" class="batch"> </paper-input>  <paper-item class="batch"> [[batch.status]]</paper-item> <paper-item> [[batch.pending]]</paper-item>
                  </paper-item>
               </template>
             </dom-repeat>
@@ -132,6 +133,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <h4>Order status:</h4>
     <div class = "output"></div>
+    <div class = "output2"></div>
   </form>
 
 </div>
@@ -263,6 +265,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         getItemAjax.headers['authorization']= 'Bearer '+ getCookie("authToken");
         getItemAjax.url = this.restURL;
+        getItemAjax.generateRequest();
 
 
         if(orgType=='Org1'){
@@ -289,10 +292,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _dealiverOrder(){
 
+          if(this.$.btnDeliver.innerHTML == 'refresh'){
+          this.$.basic6.action = '/view6';
+          this.$.basic6.allowRedirect = false;
+          // console.log(me.$.qrcode);
+          this.$.basic6.submit() //we'
+        }
+        else{
+
+          this.$.btnDeliver.innerHTML = 'refresh';
+
        var  ajaxput = this.$.deliverPOPOST;
        var contents = this.$.mygrid.getElementsByTagName('vaadin-grid-cell-content');
+       ajaxput.headers['authorization']= 'Bearer '+ getCookie("authToken");
 
-       var poid = this.mypo.id;
+       var poid = this.mypo.po;
        console.log(poid);
 
        var itemList = [];
@@ -337,16 +351,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
         console.log(itemList);
 
-        // var ajaxbody = JSON.stringify({po: poid, details: itemList});
+        var ajaxbody = JSON.stringify({po: poid, details: itemList});
         //FOR TESTING
-        ajaxput.method = "PUT";
-         var ajaxbody = JSON.stringify({type:"po", status: "delivered", details: itemList, id: poid});
+        // ajaxput.method = "PUT";
+         // var ajaxbody = JSON.stringify({type:"po", status: "delivered", details: itemList, id: poid});
 
           console.log(ajaxbody);
           ajaxput.body = ajaxbody;
           ajaxput.generateRequest();
 
       }
+    }
 
        _updateDelivery(e){
         //TODOshould include updating the currency total 
@@ -355,15 +370,40 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         console.log(response);
         // console.log(suc.success);
 
-        if (response) {       
-        // if (suc.success == true) {
+        // if (response) {       
+        if (response.success == true) {
 
           var item = response.details;
-          this.$.basic6.querySelector('.output').innerHTML = "PO delivered";
-          //set
 
-          this.$.ajax.generateRequest();
+
+          this.$.basic6.querySelector('.output').innerHTML = "PO delivered";
+
+          this.$.basic6.querySelector('.output2').hidden = false;
+
+
+          var details = ' ';
+          for (var i = 0; i < item.length; i++) {
+            details += "<br> <paper-item> Item: "+ item[i].name + ", amount: "+ item[i].amount +" total: "+ item[i].total+"</paper-item>";
+
+
+            var batches = item[i].batches;
+  
+              for (var j = 0; j < batches.length; j++) {
+                
+              details += "<paper-item> batchid: "+ batches[j].batch+" amount: "+batches[j].amount+" status: "+batches[j].status+"</paper-item>"; 
+
+            }
+
+          }  
+
+          this.$.basic6.querySelector('.output').innerHTML = "<paper-item class='TxId'> TxId: "+ response.tx_id+ " </paper-item>  <paper-item>Status:"+ response.status + "</paper-item> <paper-item> details: </paper-item>"+details;
+
+          // this.$.ajax.generateRequest();
           
+        }else{
+
+          this.$.basic6.querySelector('.output').innerHTML = "PO delivery failed <br>"+ "message:"+response.message;
+
         }
       
 
