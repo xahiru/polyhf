@@ -204,7 +204,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               // console.log('ITeM');
             }else if (response.type == 'money'){
             // var item = response.details;
-            this.$.basic2.querySelector('.output').innerHTML = "TxId: "+ response.tx_id+ " <br>"+ response.amount +" "+ response.name+ "created <br>"+"Now you have total of "+response.sum+" "+ response.name;
+            this.$.basic2.querySelector('.output').innerHTML = "TxId: "+ response.tx_id+ " <br>"+ response.amount +" "+ response.name+ " created <br>"+"Now you have total of "+response.sum+" "+ response.name;
 
 
           }else if (response.type == 'po'){
@@ -338,8 +338,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       scanClick(){
           setPageData("my-view2");
-          this.$.basic2.action = '/my-view2';
-          // this.$.basic2.allowRedirect = false;
+          this.$.basic2.action = '/qr';
+          this.$.basic2.allowRedirect = false;
           // console.log(me.$.qrcode);
           this.$.basic2.submit() //we'll change this to iron-ajax later
       }
@@ -348,7 +348,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         super.ready();
 
         // this.restURL = getRESTURL();
-        this.restURL = "http://kris.local:4000/channels/mychannel/chaincodes/escrow/names?owner=true";
+        this.restURL = "http://kris.local:4000/channels/mychannel/chaincodes/escrow/names?owner=false";
 
         var getItemAjax = this.$.ajax;
         console.log('getCookie("authToken")');

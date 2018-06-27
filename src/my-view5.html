@@ -19,6 +19,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         padding: 10px;
       }
+      :host .headeritem {
+        width: backgroud;
+      }
     </style>
 
     <div class="card">
@@ -34,9 +37,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     handle-as="json">
   </iron-ajax>
       
-      <iron-ajax id="queryGET" url="" content-type="application/json" method="POST" last-response="{{status}}" on-response="_updateDelivery" handle-as="json"></iron-ajax>
+      <iron-ajax id="queryGET" url="" content-type="application/json" method="get" last-response="{{status}}" on-response="_updateQuery" handle-as="json"></iron-ajax>
       
       <form is = "iron-form" method = "get" action = "/" id = "basic5"  content-type="application/json">
+       <!--  <style is="custom-style">
+        .headeritem{width: : 400px;};
+        </style> -->
          
 
         <label id="label3">Type:</label>
@@ -107,45 +113,112 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          <paper-button class = "paperbtn" raised on-click = "_viewQuery">view details</paper-button>
          <h4>Transaction details:</h4>
          <div class = "output"></div>
-      <div id="resultGrid" hidden>
-      <vaadin-grid id="mygrid5" theme="row-dividers" items="[[mypo.details]]" column-reordering-allowed multi-sort>
+  <div id="resultGrid" hidden>
+    <div id="itemResult">
+
+    <style is="custom-style">
+    input[readonly] {
+      border: 2px solid transparent;
+    }
+
+    input {
+      font: inherit;
+    }
+    .TxId{font-size: 8px;};
+  </style>
+
+       
+      <h>Name: [[tokenName]]</h>
+      <br>
+      <h>Amount: [[tokenAmount]]</h>
+       <br>
+        <br>
+      <div id="itemwithhistory">
+      <vaadin-grid id="mygrid5" theme="row-dividers" items="[[mypo]]" column-reordering-allowed multi-sort>
       
       <vaadin-grid-column width="9em">
-        <template class="header">Name</template>
-        <template>[[item.name]]</template>
-      </vaadin-grid-column>
-
-      <vaadin-grid-column>
-        <template class="header">
-          Quantity
-        </template>
-        <template>[[item.amount]]</template>
-      </vaadin-grid-column>
-
-      <vaadin-grid-column>
-        <template class="header">
-          Total
-        </template>
-        <template>[[item.total]]</template>
-      </vaadin-grid-column>
-
-      <vaadin-grid-column width="350px">
         <template class="header">Batch</template>
+        <template>[[item.batch]]</template>
+      </vaadin-grid-column>
+      <vaadin-grid-column width="9em">
+        <template class="header">Price</template>
+        <template>[[item.price]]</template>
+      </vaadin-grid-column>
+
+      <vaadin-grid-column>
+        <template class="header">
+          Org1
+        </template>
+        <template>[[item.org1amount]]</template>
+      </vaadin-grid-column>
+
+       <vaadin-grid-column>
+        <template class="header">
+          Org2
+        </template>
+        <template>[[item.org2amount]]</template>
+      </vaadin-grid-column>
+       <vaadin-grid-column>
+        <template class="header">
+          Org3
+        </template>
+        <template>[[item.org3amount]]</template>
+      </vaadin-grid-column>
+      </div>
+      <div id="itemnohistroy">
+        <vaadin-grid id="mygrid5item2" theme="row-dividers" items="[[mypo]]" column-reordering-allowed multi-sort>
+      
+      <vaadin-grid-column width="9em">
+        <template class="header">Batch</template>
+        <template>[[item.batch]]</template>
+      </vaadin-grid-column>
+      <vaadin-grid-column width="9em">
+        <template class="header">Price</template>
+        <template>[[item.price]]</template>
+      </vaadin-grid-column>
+
+      <vaadin-grid-column width="650px" >
+        <template class="header">
+          History
+        </template>
         <template>
-           <dom-repeat items="{{item.batches}}" as="batch" index-as="batch_no">
+          <dom-repeat items="{{item.history}}" as="history" index-as="batch_no">
               <template>
                  <template is="dom-if" if="[[_indexcheck(batch_no)]]">
-                 <paper-item> <paper-item class="batch">Batch ID</paper-item> <paper-item class="batch">Amount</paper-item> <paper-item class="batch">Status</paper-item> </paper-item>
+                 <paper-item class="headeritem">
+                  <paper-item class="batch">Timestamp</paper-item> 
+                  <paper-item>price</paper-item>  
+                  <paper-item class="batch">Org1</paper-item> 
+                  <paper-item> Org2</paper-item>
+                  <paper-item>Org3</paper-item>
+                  <paper-item >TxID</paper-item>
+                  </paper-item>
                 </template>
-                  <paper-item class="batchitems7">
-                      <paper-item>[[batch.batch]]</paper-item><paper-input type="number" label="[[batch.amount]]"> </paper-input> <paper-item > [[_getStatus(batch.status)]]</paper-item>
+                  <paper-item class="flex">
+                       <paper-item > 
+                        <paper-item >[[history.timestamp]]</paper-item> 
+                       <paper-item >[[history.price]]</paper-item>
+                       <paper-item >[[history.org1]]</paper-item>  
+                       <paper-item >[[history.org2]]</paper-item> 
+                       <paper-item >[[history.org3]]</paper-item>
+                       <paper-item  style="white-space: normal; word-wrap: break-word; word-break: break-all;width: 30px;">[[history.tx_id]]</paper-item>
+                     </paper-item>
                  </paper-item>
               </template>
             </dom-repeat>
+
         </template>
       </vaadin-grid-column>
 
+       <vaadin-grid-column>
+               
+      </div>
+
     </vaadin-grid>
+    
+
+      </div> 
+    
     </div>
 
       </form>
@@ -166,7 +239,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           notify: true,
           value: 'item'
         },
+        mypo:{
+            type: Object,
+            value: function(){
+              return[];
+            }
+            
+          },
+
+        item:{
+            type: Object,
+            value: function(){
+              return[];
+            }
+           
+          },
+
         tokenName: {
+          type: String,
+          value: ''
+        },
+        tokenAmount: {
           type: String,
           value: ''
         },
@@ -191,12 +284,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
 
       }
+      _indexcheck(n){
+        if (n==0) { return true}
+        return false;
+      }
       _pochanged5(e){
         let s = e.target.value;
         this.tokenName = s;
         // console.log("selectionchangesfrommenu");
         // console.log(this.selected);
       }
+      _gethistoryorg(s,index){
+        return s[index].amount;
+      }
+      //  _gethistor(s){
+      //   return s[0].owner;
+      // }
       _scanQueryClick(){
          setPageData("my-view5");
           this.$.basic5.action = '/qr';
@@ -208,9 +311,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     _viewQuery(){
       var ajaxget = this.$.queryGET;
+
+      ajaxget.headers['authorization']= 'Bearer '+ getCookie("authToken");
       var type = this.selected;
       var name = "";
-      var batch = "";
+      // var batch = "1";
       var history = false;
 
       var ajaxbody;
@@ -219,18 +324,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         name = this.$.moneyList.value;
         history = this.$.moneychbxhistory.hasAttribute('checked');
 
-        ajaxbody = JSON.stringify({type: "money", name: name, history: history});
+        // ajaxbody = JSON.stringify({type: "money", name: name, history: history});
+        ajaxget.url = "http://kris.local:4000/channels/mychannel/chaincodes/escrow/item";
+
 
       }else if(type == 'item'){
          name = this.tokenName;
          history = this.$.chbxhistory.hasAttribute('checked');
-         batch = this.$.batchid.value;
+         // batch = this.$.batchid.value;
 
          // console.log(name);
          // console.log(history);
          // console.log(batch);
 
-         ajaxbody = JSON.stringify({type: "item", name: name, batch: batch, history: history});
+         // ajaxbody = JSON.stringify({type: "item", name: name, batch: batch, history: history});
+         ajaxget.url = "http://kris.local:4000/channels/mychannel/chaincodes/escrow/item?type=item&name="+name+"&history="+history;
          // console.log(ajaxbody);
 
 
@@ -242,14 +350,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         console.log(name);
         var details = {po: name, status: []};
 
-        ajaxbody = JSON.stringify({type:"po", details: details});
+        // ajaxbody = JSON.stringify({type:"po", details: details});
+        ajaxget.url = "http://kris.local:4000/channels/mychannel/chaincodes/escrow/po?owner=false";
       }
-      console.log(ajaxbody);
+      // console.log(ajaxbody);
       //FOR testing poid
       // var ajaxbody = JSON.stringify({type:"po", status: "delivered", details: itemList, id: poid});
       // ajaxget.body = ajaxbody;
 
-      // ajaxget.generateRequest();
+      ajaxget.generateRequest();
 
       // var name = this.$.selecteItem.value;
       // var amount = this.amount;
@@ -260,8 +369,108 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       // this.$.resultGrid.removeAttribute('hidden');
 
 
-      this.$.resultGrid.hidden = false;
+    
 
+    }
+    _updateQuery(e){
+       var response = e.detail.xhr.response; 
+       if (response.success == true) {
+
+         
+        this.tokenName = response.name;
+        this.tokenAmount = response.sum;
+
+          if (response.type== 'item') {
+             var batchesList = [];
+
+           for (var i = 0; i < response.batches.length; i++) {
+            var row;
+          var  historyList = [];
+            if(this.$.chbxhistory.hasAttribute('checked')){
+              
+              var his = response.batches[i].history;
+              var newhistory = [];
+              
+              // console.log(his);
+
+              for (var k = 0; k < his.length; k++) {
+              
+                var org1 = 0;
+                var org2 = 0;
+                var org3 =0;
+
+                console.log('amount');
+                 console.log(his[k].amount);
+                var amounts = his[k].amount;
+
+                for (var j = 0; j < amounts.length; j++) {
+                  // console.log('insideloop');
+                  // console.log(amounts[j].amounts);
+                  if (amounts[j].owner == 'Org1MSP'){
+                    org1 = amounts[j].amount;
+                    if(org1 == undefined){
+                      org1 = 0;
+                    }
+                  }
+                  if (amounts[j].owner == 'Org2MSP'){
+                    org2 = amounts[j].amount;
+                    if(org2 == undefined){
+                      org2 = 0;
+                    }
+                  }
+                  if (amounts[j].owner == 'Org3MSP'){
+                    org3 = amounts[j].amount;
+                    if(org3 == undefined){
+                      org3 = 0;
+                    }
+                  }
+                }
+                console.log('org1');
+                console.log(org1);
+                console.log(org2);
+                console.log(org3);
+
+
+                var date = new Date(his[k].timestamp*1000);
+                // Hours part from the timestamp
+                var hours = date.getHours();
+                // Minutes part from the timestamp
+                var minutes = "0" + date.getMinutes();
+                // Seconds part from the timestamp
+                var seconds = "0" + date.getSeconds();
+
+                // Will display time in 10:30:23 format
+                var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+
+
+                newhistory = {timestamp: formattedTime, price: response.batches[i].price, tx_id: his[k].tx_id, org1: org1, org2: org2, org3: org3};
+                historyList.push(newhistory);
+                console.log(newhistory);
+              }
+              // console.log(historyList);
+              row = {batch: response.batches[i].batch, price: response.batches[i].price, history: historyList};
+
+            batchesList.push(row);
+            this.$.itemnohistroy.hidden = true;
+            this.$.itemwithhistory.hidden = false;
+
+
+            }else{
+               row = {batch: response.batches[i].batch, price: response.batches[i].price, org1amount: response.batches[i].amount[0].amount, org2amount: response.batches[i].amount[1].amount, org3amount: 0};}
+             
+             // console.log(response.batches[i].amount[0].amount);
+             batchesList.push(row);
+             this.$.itemwithhistory.hidden = true;
+             this.$.itemnohistroy.hidden = false;
+            
+           }
+            
+            this.mypo = batchesList;
+          }
+        this.$.resultGrid.hidden = false;
+       }
+
+       
 
     }
     ready(){
@@ -270,6 +479,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var form = this.$.basic5;
       me.$.po.hidden = true;
       me.$.money.hidden = true;
+
+      
+      var getItemAjax = this.$.ajax;
+        console.log('getCookie("authToken")');
+        console.log(getCookie("authToken"));
+
+        getItemAjax.headers['authorization']= 'Bearer '+ getCookie("authToken");
+        getItemAjax.url = "http://kris.local:4000/channels/mychannel/chaincodes/escrow/names?owner=false";
+        getItemAjax.generateRequest();
+
 
           this.$.tokentype5.addEventListener('click', function(){
           form.querySelector('.output').innerHTML = '';

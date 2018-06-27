@@ -45,7 +45,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <iron-ajax
     id="ajax"
     auto
-    url=""
+    url="http://kris.local:4000/channels/mychannel/chaincodes/escrow/po?"
     method="get"
     last-response="{{itemstokens}}"
     handle-as="json">
@@ -79,7 +79,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     input {
       font: inherit;
     }
-    .TxId{font-size: 10px;};
+    /*.TxId{font-size: 8px;};*/
+    .responseMessgae{font-size: 8px;};
   </style>
 
   <vaadin-grid id="mygrid" aria-label="Two-way Binding Example" items="[[mypo.details]]">
@@ -225,26 +226,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         if (n==0) { return true}
         return false;
       }
-       _getStatus(s){
-        switch(s){
-          case 1:
-            return "created";
-          break;
-          case 2:
-            return "partially delivered";
-          break;
-          case 3:
-            return "delivered";
-          break;
-          case 4:
-            return "Recieved";
-          break;
-
-          default:
-          return "unknown";
-          
-        }
-      }
+  
       ready(){
         super.ready();
         // if(this.itemstokens == null){

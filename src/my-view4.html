@@ -54,12 +54,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </paper-dropdown-menu>
          <br>
 
-           <paper-dropdown-menu  label="Item">
+           <paper-dropdown-menu  label="Item" on-selected-item-changed="_pochanged4">
             <paper-listbox id="selectedItem" slot="dropdown-content" selected="0">
               <dom-repeat items="{{itemstokens}}">
                 <template>
                   <template is="dom-if" if="[[_typecheck(item.type)]]">
-                  <paper-item value$="{{item.details.name}}">{{item.details.name}}</paper-item>
+                  <paper-item value$="{{item.details.name}}">{{item.details.name}} amount:[[item.details.amount]]</paper-item>
                 </template>
                 </template>
               </dom-repeat>
@@ -75,6 +75,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          <paper-button class = "paperbtn" raised on-click = "_transfer">Send</paper-button>
          <h4>Transaction details:</h4>
          <div id = "output"></div>
+         <div id = "output2">[[status]]</div>
       </form>
 
     </div>
@@ -93,17 +94,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               value: function() {
               return [];
                   },
-              observer: '_pochanged'
+              observer: '_pochanged4'
             },
           type: {
               type: String,
               value: 'item'
+            },
+            status: {
+              type: String,
+              value: 'none'
             },
           batch: {
               type: String,
               value: ''
             },
           amount: {
+              type: String,
+              value: '0'
+            },
+
+          itemname: {
               type: String,
               value: '0'
             },
@@ -147,15 +157,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     //   // this.mypo = po;
     //   console.log(e.target.value);
     // }
-    _pochanged(e){
-      console.log(this.$.selectedItem.value);
+    _pochanged4(e){
+      // console.log(this.$.selectedItem.value);
+      // let s = e.target.value;
+      // this.itemname = s;
     }
+
+
+    
+
     _transfer(){
       var ajaxput = this.$.transferItemPOST;
           ajaxput.url = "http://kris.local:4000/channels/mychannel/chaincodes/escrow/transfer"
 
       var type = this.type;
-      var name = this.$.selectedItem.value;
+      var name = this.$.selectedItem.querySelector('.iron-selected').getAttribute('value');
+      // console.log("selectedItem");
+      // console.log(this.$.selectedItem.querySelector('.iron-selected').getAttribute('value'));
+      // this.$.selectedItem.children[0].querySelector('.iron-selected').getAttribute('value')
+      // var name = this.itemname;
       var amount = this.amount;
       var to = this.to;
       // var to = this.$.receiver.value
@@ -176,6 +196,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           var ajaxbody = JSON.stringify({type: type, details: details});
 
           console.log(ajaxbody);
+          ajaxput.headers['authorization']= 'Bearer '+ getCookie("authToken");
           ajaxput.body = ajaxbody;
           ajaxput.generateRequest();
 
@@ -203,6 +224,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           
         }else{
 
+          this.$.basic4.querySelector('#output').innerHTML = "Item transfer failed <br> "+ " message:"+response.message + "<br>TxId: "+ response.tx_id;
+
         }
 
     }
@@ -219,7 +242,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var myorg = getCookie("orgname");
         me.from = myorg;
         //Only returns owners' items //OWNERFALSE
-        this.restURL = "http://kris.local:4000/channels/mychannel/chaincodes/escrow/names?owner=false";
+        this.restURL = "http://kris.local:4000/channels/mychannel/chaincodes/escrow/names?owner=true";
 
         var getItemAjax = this.$.ajax;
         console.log('getCookie("authToken")');
@@ -227,6 +250,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         getItemAjax.headers['authorization']= 'Bearer '+ getCookie("authToken");
         getItemAjax.url = this.restURL;
+        // getItemAjax.generateRequest();
 
 
         if (myorg == "Org1") {

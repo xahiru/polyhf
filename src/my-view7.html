@@ -42,20 +42,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <iron-ajax
     id="ajax"
     auto
-    url=""
+    url="http://kris.local:4000/channels/mychannel/chaincodes/escrow/po?"
     method="get"
     last-response="{{itemstokens}}"
     handle-as="json">
   </iron-ajax>
 
-   <iron-ajax id="recievePOPOST" url="" content-type="application/json" method="POST" last-response="{{status}}" on-response="_updateRecived" handle-as="json"></iron-ajax>
+   <iron-ajax id="recievePOPOST" url="http://kris.local:4000/channels/mychannel/chaincodes/escrow/receive" content-type="application/json" method="POST" last-response="{{status}}" on-response="_updateRecived" handle-as="json"></iron-ajax>
 
     <paper-dropdown-menu label="PO" on-selected-item-changed="_pochanged7">
       <paper-listbox id="selectedPo7" slot="dropdown-content" selected="0">
         <dom-repeat items="{{itemstokens}}">
           <template>
             <template is="dom-if" if="[[_typecheck(item.type)]]">
-              <paper-item value$="[[item.id]]">PO:[[item.id]] Status: [[item.status]]</paper-item>
+              <paper-item value$="[[item.po]]">PO:[[item.po]] Status: [[item.status]]</paper-item>
             </template>
           </template>
         </dom-repeat>
@@ -106,7 +106,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                  <paper-item> <paper-item class="batch">Batch ID</paper-item> <paper-item class="batch">Amount</paper-item> <paper-item class="batch">Status</paper-item> </paper-item>
                 </template>
                   <paper-item class="batchitems7">
-                      <paper-item>[[batch.batch]]</paper-item><paper-input type="number" label="[[batch.amount]]"> </paper-input> <paper-item > [[_getStatus(batch.status)]]</paper-item>
+                      <paper-item>[[batch.batch]]</paper-item><paper-input type="number" label="[[_balance(batch)]]"> </paper-input> <paper-item > [[batch.status]]</paper-item>
                  </paper-item>
               </template>
             </dom-repeat>
@@ -120,6 +120,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          <paper-button class = "paperbtn" raised on-click = "_recieveOrder">Recieve</paper-button>
          <h4>Transaction details:</h4>
          <div class = "output"></div>
+         <div class = "output2"></div>
       </form>
     </div>
 
@@ -157,6 +158,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       }
     }
+    _balance(batch){
+      console.log("balance");
+      // console.log(batch.delivered);
+      return batch.delivered - batch.received;
+    }
     _pochanged7(e){
       var index = 0;
     // if(this.$.selectedPo7.querySelector('.iron-selected') != null){
@@ -167,15 +173,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       let s = e.target.value;
       let result = s.match(/\d+/g).map(n => parseInt(n));
 
-      // console.log(result);
+      console.log("result");
+      console.log(result);
 
       for (var i = 0; i < this.itemstokens.length; i++) {
-       if(this.itemstokens[i].id == result){
+       if(this.itemstokens[i].po == result){
           index = i;
        } 
       }
 
      this.mypo = this.itemstokens[index]
+     console.log("Poid"+this.mypo.po);
+
+      console.log("index" + index);
 
      this.$.itemnofound7.innerHTML = '';
      var uncheck = this.$.mygrid7.querySelectorAll('paper-checkbox');
@@ -229,6 +239,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         //   console.log(mypo);
         // }
 
+         var getItemAjax = this.$.ajax;
+        console.log('getCookie("authToken")');
+        console.log(getCookie("authToken"));
+
+        getItemAjax.headers['authorization']= 'Bearer '+ getCookie("authToken");
+        getItemAjax.generateRequest();
+
         var orgType = getCookie("orgname");
 
         console.log(orgType);
@@ -262,26 +279,35 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         // console.log(suc.success);
         //FOR Testing
         // if (response) {       
-        if (suc.success == true) {
+        if (response.success == true) {
 
           var item = response.details;
           this.$.basic7.querySelector('.output').innerHTML = "PO Recieved";
+          this.$.basic7.querySelector('.output2').hidden = false;
 
-          var details = "<br>";
+          var details = ' ';
           for (var i = 0; i < item.length; i++) {
-            details.concat("<br> name: "+ item[i].name + ", amount: "+ item[i].amount +" total:"+ item[i].total);
-            details.concat("<br>batches<br>");
+            details += "<br> <paper-item> Item: "+ item[i].name + ", amount: "+ item[i].amount +" total: "+ item[i].total+"</paper-item>";
+
 
             var batches = item[i].batches;
+  
               for (var j = 0; j < batches.length; j++) {
-              details.concat("<br> name: "+ batches[i].batch+" amount: "+batches[i].amount+" status: "+batches[i].status); 
-            }
-          }
+                
+              details += "<paper-item> batchid: "+ batches[j].batch+" amount: "+batches[j].amount+" status: "+batches[j].status+"</paper-item>"; 
 
-          this.$.basic7.querySelector('.output').innerHTML = "TxId: "+ response.tx_id+ " <br> Order Status:"+ response.status + "details: <br>"+details;
+            }
+
+          }  
+
+          this.$.basic7.querySelector('.output').innerHTML = "<paper-item class='TxId'> TxId: "+ response.tx_id+ " </paper-item>  <paper-item>Status:"+ response.status + "</paper-item> <paper-item> details: </paper-item>"+details;
+
 
           this.$.ajax.generateRequest();
           
+        }else{
+          this.$.basic7.querySelector('.output').innerHTML = "PO received failed <br>"+ "message:"+response.message;
+
         }
     
       }
@@ -290,7 +316,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         var  ajaxput = this.$.recievePOPOST;
         var contents = this.$.mygrid7.getElementsByTagName('vaadin-grid-cell-content');
-        var poid = this.mypo.id;
+        var poid = this.mypo.po;
         console.log(poid);
 
         var itemList = [];
@@ -344,8 +370,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         console.log(itemList);
         //FOR testing
-         ajaxput.method = "PUT";
-         var ajaxbody = JSON.stringify({type:"po", status: "received", details: itemList, id: poid});
+         // ajaxput.method = "PUT";
+         // var ajaxbody = JSON.stringify({type:"po", status: "received", details: itemList, id: poid});
+         var ajaxbody = JSON.stringify({type:"po", details: itemList, po: poid});
+         ajaxput.headers['authorization']= 'Bearer '+ getCookie("authToken");
 
           console.log(ajaxbody);
           ajaxput.body = ajaxbody;
