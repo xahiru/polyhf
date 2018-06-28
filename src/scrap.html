@@ -1,0 +1,26 @@
+<template is="dom-if" if="[[_moneytypecheck(tokenType)]]">
+              <vaadin-grid-column width="9em">
+                <template class="header">Price</template>
+                <template>[[item.price]]</template>
+              </vaadin-grid-column>
+        </template>
+
+
+
+ <vaadin-grid-column width="350px">
+        <template class="header">Batch</template>
+        <template>
+           <dom-repeat items="{{item.batches}}" as="batch" index-as="po_batch_no">
+              <template>
+                 <template is="dom-if" if="[[_indexcheck(po_batch_no)]]">
+                 <paper-item> <paper-item class="batch">Batch ID</paper-item> <paper-item class="batch">Amount</paper-item> <paper-item class="batch">Status</paper-item> </paper-item>
+                </template>
+                  <paper-item class="batchitems7">
+                      <paper-item>[[batch.batch]]</paper-item><paper-input type="number" label="TODO"> </paper-input> <paper-item > [[batch.status]]</paper-item>
+                 </paper-item>
+              </template>
+            </dom-repeat>
+        </template>
+      </vaadin-grid-column>
+
+      

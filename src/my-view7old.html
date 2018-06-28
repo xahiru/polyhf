@@ -32,7 +32,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <div class="card">
       <div class="circle">6</div>
-      <h1>Receive</h1>
+      <h1>Recieve</h1>
       <div id="notlogggedin">This page is available to members of Org2 (dealers) </div>
       <div id="loggedin"  hidden> 
       <p>Select the PO and then enter the amount of items received from each batch</p>
@@ -106,7 +106,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                  <paper-item> <paper-item class="batch">Batch ID</paper-item> <paper-item class="batch">Amount</paper-item> <paper-item class="batch">Status</paper-item> </paper-item>
                 </template>
                   <paper-item class="batchitems7">
-                      <paper-item>[[batch.batch]]</paper-item><paper-input type="number" label="[[_balance(batch)]]"> </paper-input> <paper-item >[[batch.status]]</paper-item>
+                      <paper-item>[[batch.batch]]</paper-item><paper-input type="number" label="[[_balance(batch)]]"> </paper-input> <paper-item > [[batch.status]]</paper-item>
                  </paper-item>
               </template>
             </dom-repeat>
@@ -201,7 +201,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     }
     _typecheck(s){
-      // console.log('typecheckedcalle')
       if (s == 'po') {
           return true;
         } else {
@@ -272,6 +271,46 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           // setTokenName("my-view6");
       }
 
+      _updateRecived(e){
+        //TODOshould include updating the currency total 
+         var response = e.detail.xhr.response; 
+
+        console.log(response);
+        // console.log(suc.success);
+        //FOR Testing
+        // if (response) {       
+        if (response.success == true) {
+
+          var item = response.details;
+          this.$.basic7.querySelector('.output').innerHTML = "PO Recieved";
+          this.$.basic7.querySelector('.output2').hidden = false;
+
+          var details = ' ';
+          for (var i = 0; i < item.length; i++) {
+            details += "<br> <paper-item> Item: "+ item[i].name + ", amount: "+ item[i].amount +" total: "+ item[i].total+"</paper-item>";
+
+
+            var batches = item[i].batches;
+  
+              for (var j = 0; j < batches.length; j++) {
+                
+              details += "<paper-item> batchid: "+ batches[j].batch+" amount: "+batches[j].amount+" status: "+batches[j].status+"</paper-item>"; 
+
+            }
+
+          }  
+
+          this.$.basic7.querySelector('.output').innerHTML = "<paper-item class='TxId'> TxId: "+ response.tx_id+ " </paper-item>  <paper-item>Status:"+ response.status + "</paper-item> <paper-item> details: </paper-item>"+details;
+
+
+          this.$.ajax.generateRequest();
+          
+        }else{
+          this.$.basic7.querySelector('.output').innerHTML = "PO received failed <br>"+ "message:"+response.message;
+
+        }
+    
+      }
 
       _recieveOrder(){
 
@@ -332,22 +371,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         console.log(itemList);
         //FOR testing
          // ajaxput.method = "PUT";
-         var ajaxbody = JSON.stringify({type:"po", status: "received", details: itemList, id: poid});
-         // var ajaxbody = JSON.stringify({type:"po", details: itemList, po: poid});
-         // ajaxput.headers['authorization']= 'Bearer '+ getCookie("authToken");
+         // var ajaxbody = JSON.stringify({type:"po", status: "received", details: itemList, id: poid});
+         var ajaxbody = JSON.stringify({type:"po", details: itemList, po: poid});
+         ajaxput.headers['authorization']= 'Bearer '+ getCookie("authToken");
 
-          // console.log(ajaxbody);
-          // ajaxput.body = ajaxbody;
-          // ajaxput.generateRequest();
-          // ajaxput.body = ajaxbody;
-  
-
-          setCookie("data",ajaxbody, 10);
-
-          this.$.basic7.action = '/resultview7';
-          // this.$.basic2.allowRedirect = false;
-          // console.log(me.$.qrcode);
-          this.$.basic7.submit()
+          console.log(ajaxbody);
+          ajaxput.body = ajaxbody;
+          ajaxput.generateRequest();
 
 
       }

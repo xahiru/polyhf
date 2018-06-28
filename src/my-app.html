@@ -107,7 +107,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <a name="view3" href="[[rootPath]]view3">Register</a>
           <a name="view2" href="[[rootPath]]view2">Create Item/Order/Money</a>
           <a name="view6" href="[[rootPath]]view6">Deliver</a>
-          <a name="view7" href="[[rootPath]]view7">Recieve</a>
+          <a name="view7" href="[[rootPath]]view7">Receive</a>
           <a name="view4" href="[[rootPath]]view4">Transfer</a>
           <a name="view5" href="[[rootPath]]view5">Query</a>
           
@@ -135,6 +135,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <my-view5 name="view5"></my-view5>
           <my-view6 name="view6"></my-view6>
           <my-view7 name="view7"></my-view7>
+          <my-resultview2 name="resultview2"></my-resultview2>
+          <my-resultview4 name="resultview4"></my-resultview4>
+          <my-resultview5 name="resultview5"></my-resultview5>
+          <my-resultview6 name="resultview6"></my-resultview6>
+          <my-resultview7 name="resultview7"></my-resultview7>
           <my-view404 name="view404"></my-view404>
         </iron-pages>
       </app-header-layout>
@@ -186,6 +191,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _pageChanged(page) {
         // Load page import on demand. Show 404 page if fails
+
+         var foroot = document.querySelector('my-app').shadowRoot;
+        var fo = document.querySelector('my-app').shadowRoot.querySelector('iron-pages');
+        var removenode = document.querySelector('my-app').shadowRoot.querySelector('my-' +page);
+            fo.removeChild(removenode);
+           var newelement = document.createElement('my-'+page);
+           newelement.setAttribute('name',page);
+           fo.appendChild(newelement);
 
         const resolvedPageUrl = this.resolveUrl('my-' + page + '.html');
         // console.log(resolvedPageUrl);

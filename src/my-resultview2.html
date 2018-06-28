@@ -1,0 +1,116 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-resultview2">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+    </style>
+
+    <div class="card">
+      <div class="circle">2-4</div>
+      <h1>Resutls</h1>
+
+
+      <iron-ajax id="creatItemPOST" url="" content-type="application/json" method="POST"  on-response="_updateCreate" handle-as="json"></iron-ajax>
+     
+         <h4>Transaction details:</h4>
+        <div id ="output"></div>
+         
+
+
+    </div>
+  </template>
+
+  <script>
+    class MyResultview2 extends Polymer.Element {
+      static get is() { return 'my-resultview2'; }
+
+      _updateCreate(e){
+        //TODOshould include updating the currency total 
+       
+
+           var response = e.detail.xhr.response; 
+          
+          
+
+          // console.log(response);
+          // console.log(suc.success);
+
+          // if (response) {       
+          if (response.success == true) {
+
+            var outputtag = this.$.output;
+            console.log(outputtag);
+
+            if(response.type == 'item'){
+              // var item = response.details;
+               outputtag.innerHTML = response.amount+ " item token "+response.name+" created ";
+              // console.log('ITeM');
+            }else if (response.type == 'money'){
+            // var item = response.details;
+            outputtag.innerHTML = "TxId: "+ response.tx_id+ " <br>"+ response.amount +" "+ response.name+ " created <br>"+"Now you have total of "+response.sum+" "+ response.name;
+
+
+          }else if (response.type == 'po'){
+            var item = response.details;
+            outputtag.innerHTML = "PO created ";
+          }
+            
+          }else{
+
+            if(response.type == 'item'){
+              outputtag.innerHTML = "Item creation failed <br>"+ "message:"+response.message;
+            }
+              else if (response.type == 'money'){
+                outputtag.innerHTML = "Money creation failed <br>"+ "message:"+response.message;
+              }
+                else if (response.type == 'po'){
+                 outputtag.innerHTML= "PO creation failed <br>"+ "message:"+response.message;
+                }
+
+
+          }
+        
+        
+      }
+
+
+      ready() {
+        super.ready();
+        // on-response="" 
+
+        // var ajax = getCookie("data");
+          var ajax = this.$.creatItemPOST;
+
+          ajax.body = getCookie("data");
+          ajax.url = "http://kris.local:4000/channels/mychannel/chaincodes/escrow/create";
+          ajax.headers['authorization']= 'Bearer '+ getCookie("authToken");
+
+
+        // ajax['on-response']="_updateCreate";
+        ajax.generateRequest();
+        // console.log(ajax);
+
+        
+      }
+
+    }
+
+    window.customElements.define(MyResultview2.is, MyResultview2);
+  </script>
+</dom-module>

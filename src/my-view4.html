@@ -195,13 +195,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           var ajaxbody = JSON.stringify({type: type, details: details});
 
-          console.log(ajaxbody);
-          ajaxput.headers['authorization']= 'Bearer '+ getCookie("authToken");
-          ajaxput.body = ajaxbody;
-          ajaxput.generateRequest();
+          // console.log(ajaxbody);
+          // ajaxput.headers['authorization']= 'Bearer '+ getCookie("authToken");
+          // ajaxput.body = ajaxbody;
+          // ajaxput.generateRequest();
+          setCookie("data",ajaxbody, 10);
+          this.$.basic4.action = '/resultview4';
 
+          this.$.basic4.submit()
 
     }
+    
     _updateTransfer(e){
       var response = e.detail.xhr.response; 
 

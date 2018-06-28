@@ -1,0 +1,114 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-resultview7">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+    </style>
+
+    <div class="card">
+      <div class="circle">6</div>
+      <h1>Resutls</h1>
+
+
+      <iron-ajax id="recievePOPOST" url="http://kris.local:4000/channels/mychannel/chaincodes/escrow/receive" content-type="application/json" method="POST" last-response="{{status}}" on-response="_updateRecived" handle-as="json"></iron-ajax>
+     
+         <h4>Transaction details:</h4>
+        <div id ="output"></div>
+         <div class = "output2">
+          TxId: {{status.tx_id}}
+          <br>
+          Message: {{status.message}}
+          <br>
+         </div>
+
+    </div>
+  </template>
+
+  <script>
+    class MyResultview7 extends Polymer.Element {
+      static get is() { return 'my-resultview7'; }
+
+      
+      _updateRecived(e){
+        //TODOshould include updating the currency total 
+         var response = e.detail.xhr.response; 
+
+        console.log(response);
+        // console.log(suc.success);
+        //FOR Testing
+        // if (response) {     
+        var outputtag = this.$.output;
+
+        if (response.success == true) {
+
+          var item = response.details;
+          outputtag.innerHTML = "PO Recieved";
+          this.querySelector('.output2').hidden = false;
+
+          var details = ' ';
+          for (var i = 0; i < item.length; i++) {
+            details += "<br> <paper-item> Item: "+ item[i].name + ", amount: "+ item[i].amount +" total: "+ item[i].total+"</paper-item>";
+
+
+            var batches = item[i].batches;
+  
+              for (var j = 0; j < batches.length; j++) {
+                
+              details += "<paper-item> batchid: "+ batches[j].batch+" amount: "+batches[j].amount+" status: "+batches[j].status+"</paper-item>"; 
+
+            }
+
+          }  
+
+          outputtag.innerHTML = "<paper-item class='TxId'> TxId: "+ response.tx_id+ " </paper-item>  <paper-item>Status:"+ response.status + "</paper-item> <paper-item> details: </paper-item>"+details;
+
+
+        
+          
+        }else{
+          outputtag.innerHTML = "PO received failed <br>"+ "message:"+response.message;
+
+        }
+    
+      }
+
+
+      ready() {
+        super.ready();
+        // on-response="" 
+
+       
+        var ajax = this.$.recievePOPOST;
+
+          ajax.body = getCookie("data");
+        //   ajax.url = "http://kris.local:4000/channels/mychannel/chaincodes/escrow/receive";
+        ajax.headers['authorization']= 'Bearer '+ getCookie("authToken");
+
+        // ajax['on-response']="_updateCreate";
+         ajax.generateRequest();
+        // console.log(ajax);
+
+        
+      }
+
+    }
+
+    window.customElements.define(MyResultview7.is, MyResultview7);
+  </script>
+</dom-module>

@@ -51,7 +51,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     handle-as="json">
   </iron-ajax>
 
-  <iron-ajax id="deliverPOPOST" url="http://kris.local:4000/channels/mychannel/chaincodes/escrow/deliver" content-type="application/json" method="POST" last-response="{{status}}"  handle-as="json"></iron-ajax>
+  <iron-ajax id="deliverPOPOST" url="http://kris.local:4000/channels/mychannel/chaincodes/escrow/deliver" content-type="application/json" method="POST" last-response="{{status}}" on-response="_updateDelivery" handle-as="json"></iron-ajax>
 
   <form is = "iron-form" method = "get" action = "/" id = "basic6"  content-type="application/json">
     <paper-dropdown-menu label="PO" on-selected-item-changed="_pochanged">
@@ -80,7 +80,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       font: inherit;
     }
     /*.TxId{font-size: 8px;};*/
-    .responseMessgae{font-size: 8px;}
+    .responseMessgae{font-size: 8px;};
   </style>
 
   <vaadin-grid id="mygrid" aria-label="Two-way Binding Example" items="[[mypo.details]]">
@@ -274,13 +274,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _dealiverOrder(){
 
-       
-     
+          if(this.$.btnDeliver.innerHTML == 'refresh'){
+          this.$.basic6.action = '/view6';
+          this.$.basic6.allowRedirect = false;
+          // console.log(me.$.qrcode);
+          this.$.basic6.submit() //we'
+        }
+        else{
+
+          this.$.btnDeliver.innerHTML = 'refresh';
+
+       var  ajaxput = this.$.deliverPOPOST;
        var contents = this.$.mygrid.getElementsByTagName('vaadin-grid-cell-content');
+       ajaxput.headers['authorization']= 'Bearer '+ getCookie("authToken");
 
        var poid = this.mypo.po;
        console.log(poid);
+
        var itemList = [];
+
 
        for (var i = 0; i < contents.length; i++) {
         var checkbox = contents[i].querySelector('paper-checkbox');
@@ -322,16 +334,63 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         console.log(itemList);
 
         var ajaxbody = JSON.stringify({po: poid, details: itemList});
+        //FOR TESTING
+        // ajaxput.method = "PUT";
+         // var ajaxbody = JSON.stringify({type:"po", status: "delivered", details: itemList, id: poid});
 
-          setCookie("data",ajaxbody, 10);
-          this.$.basic6.action = '/resultview6';
+          console.log(ajaxbody);
+          ajaxput.body = ajaxbody;
+          ajaxput.generateRequest();
 
-          this.$.basic6.submit()
-
-      
+      }
     }
 
+       _updateDelivery(e){
+        //TODOshould include updating the currency total 
+         var response = e.detail.xhr.response; 
+
+        console.log(response);
+        // console.log(suc.success);
+
+        // if (response) {       
+        if (response.success == true) {
+
+          var item = response.details;
+
+
+          this.$.basic6.querySelector('.output').innerHTML = "PO delivered";
+
+          this.$.basic6.querySelector('.output2').hidden = false;
+
+
+          var details = ' ';
+          for (var i = 0; i < item.length; i++) {
+            details += "<br> <paper-item> Item: "+ item[i].name + ", amount: "+ item[i].amount +" total: "+ item[i].total+"</paper-item>";
+
+
+            var batches = item[i].batches;
+  
+              for (var j = 0; j < batches.length; j++) {
+                
+              details += "<paper-item> batchid: "+ batches[j].batch+" amount: "+batches[j].amount+" status: "+batches[j].status+"</paper-item>"; 
+
+            }
+
+          }  
+
+          this.$.basic6.querySelector('.output').innerHTML = "<paper-item class='TxId'> TxId: "+ response.tx_id+ " </paper-item>  <paper-item>Status:"+ response.status + "</paper-item> <paper-item> details: </paper-item>"+details;
+
+          // this.$.ajax.generateRequest();
+          
+        }else{
+
+          this.$.basic6.querySelector('.output').innerHTML = "PO delivery failed <br>"+ "message:"+response.message;
+
+        }
       
+
+        
+      }
     }
 
     window.customElements.define(MyView6.is, MyView6);

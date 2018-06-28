@@ -35,7 +35,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </iron-ajax>
 
 
-      <iron-ajax id="creatItemPOST" url="" content-type="application/json" method="POST" last-response="{{status}}" on-responsea="_updateCreate" handle-as="json"></iron-ajax>
+      <iron-ajax id="creatItemPOST" url="" content-type="application/json" method="POST" last-response="{{status}}" on-response="_updateCreate" handle-as="json"></iron-ajax>
 
       <form is = "iron-form" method = "get" action = "/" id = "basic2"  content-type="application/json">
          
@@ -174,9 +174,66 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       }
       _updateCreate(e){
-        // var response = e.detail.xhr.response; 
-          //we'
-               
+        //TODOshould include updating the currency total 
+        if(this.$.btncreate.innerHTML == 'refresh'){
+          this.$.basic2.action = '/resultview2';
+          this.$.basic2.allowRedirect = false;
+          // console.log(me.$.qrcode);
+          this.$.basic2.submit() //we'
+        }
+        else{
+
+        
+
+           var response = e.detail.xhr.response; 
+          
+          
+
+          console.log(response);
+          // console.log(suc.success);
+
+          // if (response) {       
+          if (response.success == true) {
+
+            this.$.basic2.querySelector('.output2').hidden = false;
+
+
+            if(response.type == 'item'){
+              // var item = response.details;
+               this.$.basic2.querySelector('.output').innerHTML = response.amount+ " item token "+response.name+" created ";
+              // console.log('ITeM');
+            }else if (response.type == 'money'){
+            // var item = response.details;
+            this.$.basic2.querySelector('.output').innerHTML = "TxId: "+ response.tx_id+ " <br>"+ response.amount +" "+ response.name+ " created <br>"+"Now you have total of "+response.sum+" "+ response.name;
+
+
+          }else if (response.type == 'po'){
+            var item = response.details;
+            this.$.basic2.querySelector('.output').innerHTML = "PO created ";
+          }
+            
+          }else{
+
+            if(response.type == 'item'){
+              this.$.basic2.querySelector('.output').innerHTML = "Item creation failed <br>"+ "message:"+response.message;
+            }
+              else if (response.type == 'money'){
+                this.$.basic2.querySelector('.output').innerHTML = "Money creation failed <br>"+ "message:"+response.message;
+              }
+                else if (response.type == 'po'){
+                  this.$.basic2.querySelector('.output').innerHTML = "PO creation failed <br>"+ "message:"+response.message;
+                }
+
+
+          }
+          this.tokenName = ''; 
+          this.price = '';
+          this.amount = '';
+          this.$.btncreate.innerHTML = 'refresh';
+          
+          }
+
+        
       }
 
       addMoreItem(e){
@@ -272,18 +329,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
           console.log(ajaxbody);
           ajax.body = ajaxbody;
-          // ajax.url = "http://kris.local:4000/channels/mychannel/chaincodes/escrow/create";
-          // ajax.headers['authorization']= 'Bearer '+ getCookie("authToken");
-          // ajax.generateRequest();
-
-          setCookie("data",ajaxbody, 10);
-
-          this.$.basic2.action = '/resultview2';
-          // this.$.basic2.allowRedirect = false;
-          // console.log(me.$.qrcode);
-          this.$.basic2.submit()
-
-
+          ajax.url = "http://kris.local:4000/channels/mychannel/chaincodes/escrow/create";
+          ajax.headers['authorization']= 'Bearer '+ getCookie("authToken");
+          ajax.generateRequest();
 
 
       }
@@ -326,10 +374,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.$.tokentype.children[2].disabled = true;
           // console.log(this.$.tokentype.children[2]);
         }else if (orgType=='Org2'){
-          this.$.tokentype.selected="po";
           this.$.tokentype.children[1].disabled = true;
-          this.$.item.hidden = true;
-          this.$.po.hidden = false;
         }
         
 
