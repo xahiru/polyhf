@@ -52,6 +52,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           // console.log(suc.success);
 
           // if (response) {       
+            var paperstyle = "<paper-item style='width: 250px;overflow:  hidden;text-overflow:  ellipsis;white-space:  nowrap;'>";
+         
           if (response.success == true) {
 
             var outputtag = this.$.output;
@@ -59,28 +61,29 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             if(response.type == 'item'){
               // var item = response.details;
-               outputtag.innerHTML = response.amount+ " item token "+response.name+" created ";
+               outputtag.innerHTML = paperstyle + response.amount+ " item token "+response.name+" created </paper-item> <br>"+ paperstyle+"TxId: "+ response.tx_id+ "</paper-item> <br>";
+
               // console.log('ITeM');
             }else if (response.type == 'money'){
             // var item = response.details;
-            outputtag.innerHTML = "TxId: "+ response.tx_id+ " <br>"+ response.amount +" "+ response.name+ " created <br>"+"Now you have total of "+response.sum+" "+ response.name;
+            outputtag.innerHTML = paperstyle + response.amount +" "+ response.name+ " created <br>"+"Now you have total of "+response.sum+" "+ response.name+"</paper-item>"+paperstyle+"TxId: "+ response.tx_id+ "</paper-item>";
 
 
           }else if (response.type == 'po'){
             var item = response.details;
-            outputtag.innerHTML = "PO created ";
+            outputtag.innerHTML = paperstyle+"PO created </paper-item> <br>"+paperstyle+ "TxId: "+response.tx_id+ "</paper-item>";
           }
             
           }else{
 
             if(response.type == 'item'){
-              outputtag.innerHTML = "Item creation failed <br>"+ "message:"+response.message;
+              outputtag.innerHTML = paperstyle+"Item creation failed <br>"+ "message:"+response.message+"</paper-item>";
             }
               else if (response.type == 'money'){
-                outputtag.innerHTML = "Money creation failed <br>"+ "message:"+response.message;
+                outputtag.innerHTML = paperstyle+"Money creation failed <br>"+ "message:"+response.message+"</paper-item>";
               }
                 else if (response.type == 'po'){
-                 outputtag.innerHTML= "PO creation failed <br>"+ "message:"+response.message;
+                 outputtag.innerHTML= paperstyle+"PO creation failed <br>"+ "message:"+response.message+"</paper-item>";
                 }
 
 

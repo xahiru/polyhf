@@ -42,28 +42,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <template>[[item.name]]</template>
       </vaadin-grid-column>
 
-      <vaadin-grid-column width="9em">
+      <vaadin-grid-column width="6em">
         <template class="header">
           Quantity
         </template>
         <template>[[item.amount]]</template>
       </vaadin-grid-column>
 
-      <vaadin-grid-column width="9em">
+      <vaadin-grid-column width="6em">
         <template class="header">
           Total
         </template>
         <template>[[item.total]]</template>
       </vaadin-grid-column>
 
-      <vaadin-grid-column width="350px">
+      <vaadin-grid-column width="700px">
         <template class="header">Batch</template>
         <template>
            <dom-repeat items="{{item.batches}}" as="batch" index-as="po_batch_no">
               <template>
                  <template is="dom-if" if="[[_indexcheck(po_batch_no)]]">
                  <paper-item> 
-                  <paper-item class="batch">Batch ID</paper-item>
+                  <paper-item >Batch ID</paper-item>
                   <paper-item class="batch">Amount</paper-item> 
                   <paper-item class="batch">Pending</paper-item>
                   <paper-item class="batch">Delivered</paper-item>
@@ -72,13 +72,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                   <paper-item class="batch">Status</paper-item> 
                 </paper-item>
                 </template>
-                  <paper-item class="batchitems7">
-                      <paper-item>[[batch.batch]]</paper-item >
-                      <paper-item> [[batch.amount]]</paper-item>
-                      <paper-item> [[batch.pending]]</paper-item>
-                      <paper-item> [[batch.delivered]]</paper-item>
-                      <paper-item> [[batch.received]]</paper-item>  
-                      <paper-item > [[batch.status]]</paper-item>
+                  <paper-item>
+                      <paper-item style="white-space:  nowrap; width: 100px;">[[batch.batch]]</paper-item >
+                      <paper-item style="white-space:  nowrap; width: 100px;"> [[batch.amount]]</paper-item>
+                      <paper-item style="white-space:  nowrap; width: 100px;"> [[batch.pending]]</paper-item>
+                      <paper-item style="white-space:  nowrap; width: 90px;"> [[batch.delivered]]</paper-item>
+                      <paper-item style="white-space:  nowrap; width: 90px;"> [[batch.received]]</paper-item>
+                      <paper-item style="white-space:  nowrap; width: 90px;"> [[batch.price]]</paper-item>   
+                      <paper-item style="white-space:  nowrap; width: 80px;"> [[batch.status]]</paper-item>
                  </paper-item>
               </template>
             </dom-repeat>
@@ -88,6 +89,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </vaadin-grid>
 
      </div>
+     <div id="moneynohistory" hidden>
+      <h>Name: [[tokenName]]</h>
+      <br>
+      <h>Amount: [[tokenAmount]]</h>
+      <br>
+    </div>
 
     <div id="moneyResult" hidden>
       <h>Name: [[tokenName]]</h>
@@ -207,22 +214,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               <template>
                  <template is="dom-if" if="[[_indexcheck(batch_no)]]">
                  <paper-item class="headeritem">
-                  <paper-item class="batch">Timestamp</paper-item> 
-                  <paper-item>price</paper-item>  
-                  <paper-item class="batch">Org1</paper-item> 
-                  <paper-item> Org2</paper-item>
-                  <paper-item>Org3</paper-item>
+                  <paper-item style="white-space: nowrap; width: 80px;">Timestamp</paper-item> 
+                  <paper-item style="white-space: nowrap; width: 60px;">price</paper-item>  
+                  <paper-item style="white-space: nowrap; width: 60px;">Org1</paper-item> 
+                  <paper-item style="white-space: nowrap; width: 60px;"> Org2</paper-item>
+                  <paper-item style="white-space: nowrap; width: 60px;">Org3</paper-item>
                   <paper-item >TxID</paper-item>
                   </paper-item>
                 </template>
                   <paper-item >
                        <paper-item > 
-                        <paper-item >[[history.timestamp]]</paper-item> 
-                       <paper-item >[[history.price]]</paper-item>
-                       <paper-item >[[history.org1]]</paper-item>  
-                       <paper-item >[[history.org2]]</paper-item> 
-                       <paper-item >[[history.org3]]</paper-item>
-                       <paper-item  style="white-space: normal; word-wrap: break-word; word-break: break-all;width: 30px;">history.tx_id</paper-item>
+                        <paper-item style="white-space: nowrap; width: 80px;">[[history.timestamp]]</paper-item> 
+                       <paper-item style="white-space: nowrap; width: 60px;">[[history.price]]</paper-item>
+                       <paper-item style="white-space: nowrap; width: 60px;" >[[history.org1]]</paper-item>  
+                       <paper-item  style="white-space: nowrap; width: 60px;">[[history.org2]]</paper-item> 
+                       <paper-item style="white-space: nowrap; width: 60px;">[[history.org3]]</paper-item>
+                       <paper-item  style="overflow: hidden; width: 250px;">[[history.tx_id]]</paper-item>
                      </paper-item>
                  </paper-item>
               </template>
@@ -426,7 +433,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     this.$.itemnohistroy.hidden = false;
                     this.$.itemResult.hidden = false;
                    }else{
-                    this.$.itemnohistroy.hidden = true;
+                    this.$.moneynohistory.hidden = false;
+                    // this.$.moneygrid.hidden = true;
+                    // this.$.moneyResult.hidden = false;
+
+                    // this.$.itemResult.hidden = false;
+                    // this.$.itemnohistroy.hidden = false;
                    }
 
                     

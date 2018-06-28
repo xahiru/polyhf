@@ -30,12 +30,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
          <h4>Transaction details:</h4>
         <div id ="output"></div>
-         <div class = "output2">
-          TxId: {{status.tx_id}}
-          <br>
-          Message: {{status.message}}
-          <br>
-         </div>
+         
 
 
 
@@ -53,7 +48,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         console.log(response);
         // console.log(suc.success);
 
-        // if (response) {       
+        // if (response) {  
+        var paperstyle = "<paper-item style='width: 200px;overflow:  hidden;text-overflow:  ellipsis;white-space:  nowrap;'>";
+              
         if (response.success == true) {
 
           var batches = response.batches;
@@ -62,14 +59,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             batchdetails.concat("<br> batch: "+ batches[i].batch+" amount:"+batches[i].amount); 
           }
 
-          this.$.output.innerHTML = "Item tranfered <br> "+ " message:"+response.message + "<br>TxId: "+ response.tx_id+batchdetails;
+          this.$.output.innerHTML = paperstyle+ "Item tranfered </paper-item> <br>"+ "<paper-item> message:"+response.message + "</paper-item> <br>"+ paperstyle+"TxId:"+ response.tx_id+"<br>"+paperstyle +batchdetails+"</paper-item>";
           //set
 
-          this.$.ajax.generateRequest();
-          
+         
         }else{
 
-          this.$.output.innerHTML = "Item transfer failed <br> "+ " message:"+response.message + "<br>TxId: "+ response.tx_id;
+          this.$.output.innerHTML = paperstyle+ "Item transfer failed </paper-item> <br> "+ "<paper-item> message:"+response.message + "</paper-item> "
 
         }
 

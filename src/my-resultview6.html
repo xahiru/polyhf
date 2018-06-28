@@ -30,12 +30,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
          <h4>Transaction details:</h4>
         <div id ="output"></div>
-         <div class = "output2">
-          TxId: {{status.tx_id}}
-          <br>
-          Message: {{status.message}}
-          <br>
-         </div>
+         
+
 
 
 
@@ -53,7 +49,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         console.log(response);
         // console.log(suc.success);
 
-        // if (response) {       
+      
+        var paperstyle = "<paper-item style='width: 200px;overflow:  hidden;text-overflow:  ellipsis;white-space:  nowrap;'>";
+        
         if (response.success == true) {
 
           var item = response.details;
@@ -79,13 +77,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           }  
 
-          this.$.output.innerHTML = "<paper-item class='TxId'> TxId: "+ response.tx_id+ " </paper-item>  <paper-item>Status:"+ response.status + "</paper-item> <paper-item> details: </paper-item>"+details;
+          this.$.output.innerHTML = paperstyle+"TxId: "+ response.tx_id+ " </paper-item>  <paper-item>Status:"+ response.status + "</paper-item> <paper-item> details: </paper-item>"+details;
 
           // this.$.ajax.generateRequest();
           
         }else{
 
-          this.$.basic6.querySelector('.output').innerHTML = "PO delivery failed <br>"+ "message:"+response.message;
+          this.$.output.innerHTML = "PO delivery failed <br>"+ "message:"+response.message;
 
         }
       

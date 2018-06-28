@@ -81,6 +81,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
     /*.TxId{font-size: 8px;};*/
     .responseMessgae{font-size: 8px;}
+    .batchitemheader{
+      width: 250px;
+      overflow:  hidden;
+      text-overflow:  ellipsis;
+      white-space:  nowrap;}
   </style>
 
   <vaadin-grid id="mygrid" aria-label="Two-way Binding Example" items="[[mypo.details]]">
@@ -110,16 +115,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </template>
     </vaadin-grid-column>
 
-    <vaadin-grid-column width="350px">
+    <vaadin-grid-column width="450px">
       <template class="header">Batch</template>
       <template>
         <dom-repeat items="{{item.batches}}" as="batch" index-as="batch_no">
               <template>
                  <template is="dom-if" if="[[_indexcheck(batch_no)]]">
-                 <paper-item> <paper-item class="batch">Batch ID</paper-item> <paper-item class="batch">Amount</paper-item> <paper-item class="batch">Status</paper-item> <paper-item> pending</paper-item></paper-item>
+                 <paper-item>
+                  <paper-item style="white-space:  nowrap; width: 100px;" >Batch ID</paper-item>
+                  <paper-item style="white-space:  nowrap; width: 100px;">Amount</paper-item>
+                  <paper-item style="white-space:  nowrap; width: 100px;">Status</paper-item>
+                  <paper-item style="white-space:  nowrap; width: 100px;"> pending</paper-item>
+                </paper-item>
                 </template>
-                  <paper-item class="batchitems">
-                      <paper-item ><paper-checkbox value$="[[batch.batch]]"></paper-checkbox>[[batch.batch]]</paper-item><paper-input type="number" label="[[batch.pending]]" class="batch"> </paper-input>  <paper-item class="batch"> [[batch.status]]</paper-item> <paper-item> [[batch.pending]]</paper-item>
+                  <paper-item >
+                      <paper-item  style="white-space:  nowrap; width: 90px;" ><paper-checkbox value$="[[batch.batch]]"></paper-checkbox>[[batch.batch]]</paper-item>
+                      <paper-input  type="number" label="[[batch.pending]]" style="white-space:  nowrap; width: 100px;"> </paper-input>  
+                      <paper-item style="white-space:  nowrap; width: 90px;"> [[batch.status]]</paper-item> 
+                      <paper-item style="white-space:  nowrap; width: 90px;"> [[batch.pending]]</paper-item>
                  </paper-item>
               </template>
             </dom-repeat>
@@ -132,9 +145,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <paper-button id="btnDeliver" class = "paperbtn" raised on-click = "_dealiverOrder">Deliver</paper-button>
     <br>
 
-    <h4>Order status:</h4>
-    <div class = "output"></div>
-    <div class = "output2"></div>
+
   </form>
 
 </div>

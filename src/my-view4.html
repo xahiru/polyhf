@@ -73,9 +73,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <br>
         <br>
          <paper-button class = "paperbtn" raised on-click = "_transfer">Send</paper-button>
-         <h4>Transaction details:</h4>
-         <div id = "output"></div>
-         <div id = "output2">[[status]]</div>
+        
       </form>
 
     </div>
@@ -205,7 +203,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.$.basic4.submit()
 
     }
-    
+
     _updateTransfer(e){
       var response = e.detail.xhr.response; 
 
